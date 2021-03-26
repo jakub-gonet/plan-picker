@@ -27,6 +27,6 @@ Po zamknięciu zapisów moderatorzy roku przypisują studentów do grup uwzględ
 - Te same uprawnienia co [Moderator](#Moderator)
 - Ma dostęp do wszystkich zapisów
 - Może przydzielać role
-- Może dodawać konta studentom
+- Może dodawać, usuwać i edytować konta studentów
 
 # Schemat bazy
