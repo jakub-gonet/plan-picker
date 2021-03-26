@@ -45,24 +45,28 @@ Reprezentuje aktora Student.
 ## Moderator
 
 Podklasa typu encji _Student_
+
 Reprezentuje aktora Moderator.
 
 ## Administrator
 
 Podklasa typu encji _Moderator_
+
 Reprezentuje aktora Administrator.
 
 ## Rocznik
 
 Reprezentuje grupę użytkowników na tym samym roczniku i kierunku.
+
 - Rok rozpoczęcia nauki
 - Nazwa kierunku
 
 ## Zapis
 
 Reprezentuje zapis, w ramach którego studenci będą przypisywani do grup.
+
 - Nazwa zapisu
-- Czy otwarty
+- Stan zapisu (otwarty, oczekiwanie na wyniki itp.)
 - Minimalna ilość punktów na przedmiot
 - Maksymalna ilość punktów na przedmiot
 - Maksymalna ilość punktów na grupę
@@ -70,6 +74,7 @@ Reprezentuje zapis, w ramach którego studenci będą przypisywani do grup.
 ## Przedmiot
 
 Reprezentuje przedmiot, z którego organizowane są zajęcia.
+
 - Nazwa przedmiotu
 - Rodzaj zajęć (wykład, laboratoria itp.)
 - Sposób prowadzenia zajęć (zdalne, stacjonarne itp.)
@@ -77,11 +82,13 @@ Reprezentuje przedmiot, z którego organizowane są zajęcia.
 ## Grupa
 
 Reprezentuje grupę zajęciową.
+
 - Prowadzący
 
 ## Termin
 
-Reprezentuje blok zajęciowy odbywający się w danym terminie
+Reprezentuje blok zajęciowy odbywający się w danym terminie.
+
 - Dzień wykonywania
 - Godzina rozpoczęcia
 - Godzina zakończenia
@@ -89,7 +96,8 @@ Reprezentuje blok zajęciowy odbywający się w danym terminie
 
 ## Preferencja
 
-Reprezentuje nadane przez studenta pubkty priorytetu.
+Reprezentuje nadane przez studenta punkty priorytetu.
+
 - Ilość punktów
 
 # Schemat bazy
