@@ -31,4 +31,65 @@ Po zamknięciu zapisów moderatorzy roku przypisują studentów do grup uwzględ
 - Może przydzielać role
 - Może dodawać, usuwać i edytować konta studentów
 
+
+# Typy encji
+
+## Student
+
+Reprezentuje aktora Student.
+- Imię
+- Nazwisko
+- E-mail
+- Numer indeksu
+
+## Moderator
+
+Podklasa typu encji _Student_
+Reprezentuje aktora Moderator.
+
+## Administrator
+
+Podklasa typu encji _Moderator_
+Reprezentuje aktora Administrator.
+
+## Rocznik
+
+Reprezentuje grupę użytkowników na tym samym roczniku i kierunku.
+- Rok rozpoczęcia nauki
+- Nazwa kierunku
+
+## Zapis
+
+Reprezentuje zapis, w ramach którego studenci będą przypisywani do grup.
+- Nazwa zapisu
+- Czy otwarty
+- Minimalna ilość punktów na przedmiot
+- Maksymalna ilość punktów na przedmiot
+- Maksymalna ilość punktów na grupę
+
+## Przedmiot
+
+Reprezentuje przedmiot, z którego organizowane są zajęcia.
+- Nazwa przedmiotu
+- Rodzaj zajęć (wykład, laboratoria itp.)
+- Sposób prowadzenia zajęć (zdalne, stacjonarne itp.)
+
+## Grupa
+
+Reprezentuje grupę zajęciową.
+- Prowadzący
+
+## Termin
+
+Reprezentuje blok zajęciowy odbywający się w danym terminie
+- Dzień wykonywania
+- Godzina rozpoczęcia
+- Godzina zakończenia
+- Ograniczenia czasowe (tydzień A/B itp.)
+
+## Preferencja
+
+Reprezentuje nadane przez studenta pubkty priorytetu.
+- Ilość punktów
+
 # Schemat bazy
