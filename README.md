@@ -15,6 +15,7 @@ Po zamknięciu zapisów moderatorzy roku przypisują studentów do grup uwzględ
 - Może wybrać przedmioty w ramach zapisów
 - Może przydzielić ograniczoną liczbę punktów w ramach zapisu na dany termin
 - Może zobaczyć przydzielony termin
+- Może zobaczyć skład grup zajęciowych, których jest częścią
 
 ## Moderator
 
