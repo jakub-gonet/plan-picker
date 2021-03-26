@@ -22,6 +22,7 @@ Po zamknięciu zapisów moderatorzy roku przypisują studentów do grup uwzględ
 - Te same uprawnienia co [Student](#Student)
 - Może tworzyć, edytować i usuwać zapisy w obrębie swojego rocznika
 - Może przenosić studentów pomiędzy grupami, gdy zapisy są zamknięte
+- Może wyświetlać skład wszystkich grup zajęciowych w ramach zapisu
 
 ## Administrator
 
