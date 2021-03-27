@@ -78,7 +78,6 @@ Reprezentuje przedmiot, z którego organizowane są zajęcia.
 
 - Nazwa przedmiotu
 - Rodzaj zajęć (wykład, laboratoria itp.)
-- Miejsce odbywania się zajęć
 
 ## Grupa
 
@@ -89,6 +88,7 @@ Reprezentuje grupę zajęciową.
 - Imię
 - Nazwisko
 - Tytuł naukowy
+
 ## Termin
 
 Reprezentuje blok zajęciowy odbywający się w danym terminie.
@@ -97,6 +97,7 @@ Reprezentuje blok zajęciowy odbywający się w danym terminie.
 - Godzina rozpoczęcia
 - Czas trwania
 - Ograniczenia czasowe (tydzień A/B itp.)
+- Miejsce odbywania się zajęć
 
 ## Preferencja
 
