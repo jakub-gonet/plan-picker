@@ -67,9 +67,9 @@ Reprezentuje zapis, w ramach którego studenci będą przypisywani do grup.
 
 - Nazwa zapisu
 - Stan zapisu (otwarty, oczekiwanie na wyniki itp.)
-- Minimalna ilość punktów na przedmiot
-- Maksymalna ilość punktów na przedmiot
-- Maksymalna ilość punktów na grupę
+- Minimalna liczba punktów na przedmiot
+- Maksymalna liczba punktów na przedmiot
+- Maksymalna liczba punktów na grupę
 
 ## Przedmiot
 
