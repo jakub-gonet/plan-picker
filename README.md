@@ -98,6 +98,6 @@ Reprezentuje blok zajęciowy odbywający się w danym terminie.
 
 Reprezentuje nadane przez studenta punkty priorytetu.
 
-- Ilość punktów
+- Liczba punktów
 
 # Schemat bazy
