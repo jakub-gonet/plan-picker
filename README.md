@@ -96,7 +96,6 @@ Reprezentuje blok zajęciowy odbywający się w danym terminie.
 - Dzień odbywania się zajęć
 - Godzina rozpoczęcia
 - Czas trwania
-- Ograniczenia czasowe (tydzień A/B itp.)
 - Miejsce odbywania się zajęć
 
 ## Preferencja
