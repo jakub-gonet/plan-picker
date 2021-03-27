@@ -34,25 +34,26 @@ Po zamknięciu zapisów moderatorzy roku przypisują studentów do grup uwzględ
 
 # Typy encji
 
-## Student
+## Użytkownik
 
 Reprezentuje aktora Student.
+
 - Imię
 - Nazwisko
-- E-mail
 - Numer indeksu
 
-## Moderator
+## Dane logowania
 
-Podklasa typu encji _Student_
+Reprezentuje dane, za pomocą których autentykowany jest użytkownik.
 
-Reprezentuje aktora Moderator.
+- Adres e-mail
+- Hash hasła
 
-## Administrator
+## Rola
 
-Podklasa typu encji _Moderator_
+Reprezentuje typ i uprawnienia użytkownika.
 
-Reprezentuje aktora Administrator.
+- Nazwa
 
 ## Rocznik
 
@@ -77,21 +78,24 @@ Reprezentuje przedmiot, z którego organizowane są zajęcia.
 
 - Nazwa przedmiotu
 - Rodzaj zajęć (wykład, laboratoria itp.)
-- Sposób prowadzenia zajęć (zdalne, stacjonarne itp.)
+- Miejsce odbywania się zajęć
 
 ## Grupa
 
 Reprezentuje grupę zajęciową.
 
-- Prowadzący
+## Prowadzący
 
+- Imię
+- Nazwisko
+- Tytuł naukowy
 ## Termin
 
 Reprezentuje blok zajęciowy odbywający się w danym terminie.
 
-- Dzień wykonywania
+- Dzień odbywania się zajęć
 - Godzina rozpoczęcia
-- Godzina zakończenia
+- Czas trwania
 - Ograniczenia czasowe (tydzień A/B itp.)
 
 ## Preferencja
