@@ -8,6 +8,7 @@ defmodule PlanPicker.User do
     field :name, :string
 
     has_one :password_auth, PlanPicker.Accounts.PasswordAuth
+    has_many :role, PlanPicker.Role
     timestamps()
   end
 
