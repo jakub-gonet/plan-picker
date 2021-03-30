@@ -31,7 +31,6 @@ Po zamknięciu zapisów moderatorzy roku przypisują studentów do grup uwzględ
 - Może przydzielać role
 - Może dodawać, usuwać i edytować konta studentów
 
-
 # Typy encji
 
 ## Użytkownik
@@ -41,26 +40,15 @@ Reprezentuje aktora Student.
 - Imię
 - Nazwisko
 - Numer indeksu
-
-## Dane logowania
-
-Reprezentuje dane, za pomocą których autentykowany jest użytkownik.
-
 - Adres e-mail
 - Hash hasła
+- Rok rozpoczęcia nauki
 
 ## Rola
 
 Reprezentuje typ i uprawnienia użytkownika.
 
 - Nazwa
-
-## Rocznik
-
-Reprezentuje grupę użytkowników na tym samym roczniku i kierunku.
-
-- Rok rozpoczęcia nauki
-- Nazwa kierunku
 
 ## Zapis
 
@@ -77,11 +65,12 @@ Reprezentuje zapis, w ramach którego studenci będą przypisywani do grup.
 Reprezentuje przedmiot, z którego organizowane są zajęcia.
 
 - Nazwa przedmiotu
-- Rodzaj zajęć (wykład, laboratoria itp.)
 
 ## Grupa
 
 Reprezentuje grupę zajęciową.
+
+- Rodzaj zajęć (wykład, laboratoria itp.)
 
 ## Prowadzący
 
