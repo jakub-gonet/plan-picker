@@ -7,6 +7,7 @@ defmodule PlanPicker.User do
     field :last_name, :string
     field :name, :string
 
+    has_one :password_auth, PlanPicker.Accounts.PasswordAuth
     timestamps()
   end
 

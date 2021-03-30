@@ -7,7 +7,8 @@ defmodule PlanPicker.Repo.Migrations.CreatePasswordAuthAuthTables do
     create table(:password_auth) do
       add :email, :citext, null: false
       add :hashed_password, :string, null: false
-      add :confirmed_at, :naive_datetime
+      add :confirmed_at, :utc_datetime
+      add :user_id, references(:users)
       timestamps()
     end
 

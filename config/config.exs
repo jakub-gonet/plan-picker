@@ -10,6 +10,10 @@ use Mix.Config
 config :plan_picker,
   ecto_repos: [PlanPicker.Repo]
 
+config :plan_picker, App.Repo, migration_primary_key: [name: :uuid, type: :binary_id]
+config :plan_picker, App.Repo, migration_timestamps: [type: :utc_datetime]
+config :plan_picker, App.Repo, migration_foreign_key: [column: :uuid, type: :binary_id]
+
 # Configures the endpoint
 config :plan_picker, PlanPickerWeb.Endpoint,
   url: [host: "localhost"],
