@@ -1,0 +1,15 @@
+<h1>Forgot your password?</h1>
+
+<%= form_for :password_auth, Routes.password_auth_reset_password_path(@conn, :create), fn f -> %>
+  <%= label f, :email %>
+  <%= email_input f, :email, required: true %>
+
+  <div>
+    <%= submit "Send instructions to reset password" %>
+  </div>
+<% end %>
+
+<p>
+  <%= link "Register", to: Routes.password_auth_registration_path(@conn, :new) %> |
+  <%= link "Log in", to: Routes.password_auth_session_path(@conn, :new) %>
+</p>

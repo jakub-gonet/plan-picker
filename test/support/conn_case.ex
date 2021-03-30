@@ -40,4 +40,30 @@ defmodule PlanPickerWeb.ConnCase do
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
+
+  @doc """
+  Setup helper that registers and logs in password_auth.
+
+      setup :register_and_log_in_password_auth
+
+  It stores an updated connection and a registered password_auth in the
+  test context.
+  """
+  def register_and_log_in_password_auth(%{conn: conn}) do
+    password_auth = PlanPicker.AccountsFixtures.password_auth_fixture()
+    %{conn: log_in_password_auth(conn, password_auth), password_auth: password_auth}
+  end
+
+  @doc """
+  Logs the given `password_auth` into the `conn`.
+
+  It returns an updated `conn`.
+  """
+  def log_in_password_auth(conn, password_auth) do
+    token = PlanPicker.Accounts.generate_password_auth_session_token(password_auth)
+
+    conn
+    |> Phoenix.ConnTest.init_test_session(%{})
+    |> Plug.Conn.put_session(:password_auth_token, token)
+  end
 end
