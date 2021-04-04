@@ -39,7 +39,8 @@ defmodule PlanPickerWeb.ConnCase do
     end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}
-  
+  end
+
   @doc """
   Setup helper that registers and logs in users.
 
