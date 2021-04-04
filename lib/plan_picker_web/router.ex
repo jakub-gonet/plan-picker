@@ -1,7 +1,7 @@
 defmodule PlanPickerWeb.Router do
   use PlanPickerWeb, :router
 
-  import PlanPickerWeb.PasswordAuthAuth
+  import PlanPickerWeb.UserAuth
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -9,7 +9,7 @@ defmodule PlanPickerWeb.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug :fetch_current_password_auth
+    plug :fetch_current_user
   end
 
   pipeline :api do
@@ -46,32 +46,32 @@ defmodule PlanPickerWeb.Router do
   ## Authentication routes
 
   scope "/", PlanPickerWeb do
-    pipe_through [:browser, :redirect_if_password_auth_is_authenticated]
+    pipe_through [:browser, :redirect_if_user_is_authenticated]
 
-    get "/password_auth/register", PasswordAuthRegistrationController, :new
-    post "/password_auth/register", PasswordAuthRegistrationController, :create
-    get "/password_auth/log_in", PasswordAuthSessionController, :new
-    post "/password_auth/log_in", PasswordAuthSessionController, :create
-    get "/password_auth/reset_password", PasswordAuthResetPasswordController, :new
-    post "/password_auth/reset_password", PasswordAuthResetPasswordController, :create
-    get "/password_auth/reset_password/:token", PasswordAuthResetPasswordController, :edit
-    put "/password_auth/reset_password/:token", PasswordAuthResetPasswordController, :update
+    get "/users/register", UserRegistrationController, :new
+    post "/users/register", UserRegistrationController, :create
+    get "/users/log_in", UserSessionController, :new
+    post "/users/log_in", UserSessionController, :create
+    get "/users/reset_password", UserResetPasswordController, :new
+    post "/users/reset_password", UserResetPasswordController, :create
+    get "/users/reset_password/:token", UserResetPasswordController, :edit
+    put "/users/reset_password/:token", UserResetPasswordController, :update
   end
 
   scope "/", PlanPickerWeb do
-    pipe_through [:browser, :require_authenticated_password_auth]
+    pipe_through [:browser, :require_authenticated_user]
 
-    get "/password_auth/settings", PasswordAuthSettingsController, :edit
-    put "/password_auth/settings", PasswordAuthSettingsController, :update
-    get "/password_auth/settings/confirm_email/:token", PasswordAuthSettingsController, :confirm_email
+    get "/users/settings", UserSettingsController, :edit
+    put "/users/settings", UserSettingsController, :update
+    get "/users/settings/confirm_email/:token", UserSettingsController, :confirm_email
   end
 
   scope "/", PlanPickerWeb do
     pipe_through [:browser]
 
-    delete "/password_auth/log_out", PasswordAuthSessionController, :delete
-    get "/password_auth/confirm", PasswordAuthConfirmationController, :new
-    post "/password_auth/confirm", PasswordAuthConfirmationController, :create
-    get "/password_auth/confirm/:token", PasswordAuthConfirmationController, :confirm
+    delete "/users/log_out", UserSessionController, :delete
+    get "/users/confirm", UserConfirmationController, :new
+    post "/users/confirm", UserConfirmationController, :create
+    get "/users/confirm/:token", UserConfirmationController, :confirm
   end
 end

@@ -4,26 +4,26 @@ defmodule PlanPicker.AccountsFixtures do
   entities via the `PlanPicker.Accounts` context.
   """
 
-  def unique_password_auth_email, do: "password_auth#{System.unique_integer()}@example.com"
-  def valid_password_auth_password, do: "hello world!"
+  def unique_user_email, do: "user#{System.unique_integer()}@example.com"
+  def valid_user_password, do: "hello world!"
 
-  def valid_password_auth_attributes(attrs \\ %{}) do
+  def valid_user_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
-      email: unique_password_auth_email(),
-      password: valid_password_auth_password()
+      email: unique_user_email(),
+      password: valid_user_password()
     })
   end
 
-  def password_auth_fixture(attrs \\ %{}) do
-    {:ok, password_auth} =
+  def user_fixture(attrs \\ %{}) do
+    {:ok, user} =
       attrs
-      |> valid_password_auth_attributes()
-      |> PlanPicker.Accounts.register_password_auth()
+      |> valid_user_attributes()
+      |> PlanPicker.Accounts.register_user()
 
-    password_auth
+    user
   end
 
-  def extract_password_auth_token(fun) do
+  def extract_user_token(fun) do
     {:ok, captured} = fun.(&"[TOKEN]#{&1}[TOKEN]")
     [_, token, _] = String.split(captured.body, "[TOKEN]")
     token

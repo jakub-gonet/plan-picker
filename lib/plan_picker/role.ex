@@ -4,7 +4,7 @@ defmodule PlanPicker.Role do
 
   schema "roles" do
     field :name, Ecto.Enum, values: [:moderator, :admin]
-    belongs_to :user, PlanPicker.User
+    belongs_to :user, PlanPicker.Accounts.User
 
     timestamps()
   end

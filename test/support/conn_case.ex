@@ -39,31 +39,30 @@ defmodule PlanPickerWeb.ConnCase do
     end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}
-  end
-
+  
   @doc """
-  Setup helper that registers and logs in password_auth.
+  Setup helper that registers and logs in users.
 
-      setup :register_and_log_in_password_auth
+      setup :register_and_log_in_user
 
-  It stores an updated connection and a registered password_auth in the
+  It stores an updated connection and a registered user in the
   test context.
   """
-  def register_and_log_in_password_auth(%{conn: conn}) do
-    password_auth = PlanPicker.AccountsFixtures.password_auth_fixture()
-    %{conn: log_in_password_auth(conn, password_auth), password_auth: password_auth}
+  def register_and_log_in_user(%{conn: conn}) do
+    user = PlanPicker.AccountsFixtures.user_fixture()
+    %{conn: log_in_user(conn, user), user: user}
   end
 
   @doc """
-  Logs the given `password_auth` into the `conn`.
+  Logs the given `user` into the `conn`.
 
   It returns an updated `conn`.
   """
-  def log_in_password_auth(conn, password_auth) do
-    token = PlanPicker.Accounts.generate_password_auth_session_token(password_auth)
+  def log_in_user(conn, user) do
+    token = PlanPicker.Accounts.generate_user_session_token(user)
 
     conn
     |> Phoenix.ConnTest.init_test_session(%{})
-    |> Plug.Conn.put_session(:password_auth_token, token)
+    |> Plug.Conn.put_session(:user_token, token)
   end
 end
