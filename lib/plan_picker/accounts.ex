@@ -5,7 +5,7 @@ defmodule PlanPicker.Accounts do
 
   import Ecto.Query, warn: false
   alias PlanPicker.Repo
-  alias PlanPicker.Accounts.{User, UserToken, UserNotifier}
+  alias PlanPicker.Accounts.{User, UserNotifier, UserToken}
 
   ## Database getters
 

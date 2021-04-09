@@ -13,8 +13,9 @@ defmodule PlanPicker.DataCase do
   by setting `use PlanPicker.DataCase, async: true`, although
   this option is not recommended for other databases.
   """
-
   use ExUnit.CaseTemplate
+
+  alias Ecto.Adapters.SQL.Sandbox
 
   using do
     quote do
@@ -28,10 +29,10 @@ defmodule PlanPicker.DataCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(PlanPicker.Repo)
+    :ok = Sandbox.checkout(PlanPicker.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(PlanPicker.Repo, {:shared, self()})
+      Sandbox.mode(PlanPicker.Repo, {:shared, self()})
     end
 
     :ok

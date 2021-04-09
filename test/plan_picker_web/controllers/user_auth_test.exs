@@ -1,9 +1,9 @@
 defmodule PlanPickerWeb.UserAuthTest do
   use PlanPickerWeb.ConnCase, async: true
 
+  import PlanPicker.AccountsFixtures
   alias PlanPicker.Accounts
   alias PlanPickerWeb.UserAuth
-  import PlanPicker.AccountsFixtures
 
   @remember_me_cookie "_plan_picker_web_user_remember_me"
 
