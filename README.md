@@ -76,7 +76,6 @@ Reprezentuje grupę zajęciową.
 
 - Imię
 - Nazwisko
-- Tytuł naukowy
 
 ## Termin
 
