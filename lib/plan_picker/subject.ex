@@ -4,6 +4,7 @@ defmodule PlanPicker.Subject do
 
   schema "subjects" do
     field :name, :string
+    has_many :classes, PlanPicker.Class
 
     timestamps()
   end

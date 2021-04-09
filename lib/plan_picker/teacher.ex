@@ -5,6 +5,7 @@ defmodule PlanPicker.Teacher do
   schema "teachers" do
     field :name, :string
     field :surname, :string
+    has_many :classes, PlanPicker.Class
 
     timestamps()
   end
