@@ -7,6 +7,8 @@ defmodule PlanPicker.Class do
     belongs_to :teacher, PlanPicker.Teacher
     belongs_to :subject, PlanPicker.Subject
 
+    many_to_many(:users, PlanPicker.Accounts.User, join_through: "classes_users")
+
     timestamps()
   end
 

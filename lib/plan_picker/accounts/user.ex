@@ -14,6 +14,7 @@ defmodule PlanPicker.Accounts.User do
     field :name, :string
 
     has_many :role, PlanPicker.Role
+    many_to_many(:classes, PlanPicker.Class, join_through: "classes_users")
 
     timestamps()
   end
