@@ -1,5 +1,5 @@
 defmodule PlanPicker.PointsAssigment do
-  use Ecto.Schema
+  use PlanPicker.Schema
   import Ecto.Changeset
 
   schema "points_assignments" do

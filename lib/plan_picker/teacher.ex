@@ -1,5 +1,5 @@
 defmodule PlanPicker.Teacher do
-  use Ecto.Schema
+  use PlanPicker.Schema
   import Ecto.Changeset
 
   schema "teachers" do

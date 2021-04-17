@@ -1,5 +1,5 @@
 defmodule PlanPicker.Term do
-  use Ecto.Schema
+  use PlanPicker.Schema
   import Ecto.Changeset
 
   schema "terms" do

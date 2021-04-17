@@ -1,5 +1,5 @@
 defmodule PlanPicker.Subject do
-  use Ecto.Schema
+  use PlanPicker.Schema
   import Ecto.Changeset
 
   schema "subjects" do

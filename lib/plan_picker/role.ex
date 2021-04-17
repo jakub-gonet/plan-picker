@@ -1,5 +1,5 @@
 defmodule PlanPicker.Role do
-  use Ecto.Schema
+  use PlanPicker.Schema
   import Ecto.Changeset
 
   schema "roles" do

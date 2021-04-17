@@ -1,5 +1,5 @@
 defmodule PlanPicker.Enrollment do
-  use Ecto.Schema
+  use PlanPicker.Schema
   import Ecto.Changeset
 
   schema "enrollments" do
