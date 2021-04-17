@@ -1,8 +1,8 @@
 defmodule PlanPickerWeb.UserSettingsControllerTest do
   use PlanPickerWeb.ConnCase, async: true
 
-  alias PlanPicker.Accounts
   import PlanPicker.AccountsFixtures
+  alias PlanPicker.Accounts
 
   setup :register_and_log_in_user
 

@@ -1,8 +1,8 @@
 defmodule PlanPicker.AccountsTest do
   use PlanPicker.DataCase
 
-  alias PlanPicker.Accounts
   import PlanPicker.AccountsFixtures
+  alias PlanPicker.Accounts
   alias PlanPicker.Accounts.{User, UserToken}
 
   describe "get_user_by_email/1" do

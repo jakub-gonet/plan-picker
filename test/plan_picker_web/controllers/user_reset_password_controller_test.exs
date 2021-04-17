@@ -1,9 +1,9 @@
 defmodule PlanPickerWeb.UserResetPasswordControllerTest do
   use PlanPickerWeb.ConnCase, async: true
 
+  import PlanPicker.AccountsFixtures
   alias PlanPicker.Accounts
   alias PlanPicker.Repo
-  import PlanPicker.AccountsFixtures
 
   setup do
     %{user: user_fixture()}
