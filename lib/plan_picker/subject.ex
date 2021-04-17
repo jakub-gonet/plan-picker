@@ -6,6 +6,8 @@ defmodule PlanPicker.Subject do
     field :name, :string
     has_many :classes, PlanPicker.Class
 
+    belongs_to :enrollment, PlanPicker.Enrollment
+
     timestamps()
   end
 
