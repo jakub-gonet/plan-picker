@@ -1,5 +1,26 @@
 # Projekt z baz danych 2 – Karol Wilk, Jakub Gonet
 
+# Instalacja
+
+## Docker
+
+```bash
+docker-compose up
+```
+
+## Lokalna instalacja
+
+```bash
+mix deps.get
+mix ecto.setup
+cd assets && npm install && cd ..
+
+# Włączenie serwera
+mix phx.server
+```
+
+Serwer działa pod adresem [http://localhost:4000/](http://localhost:4000/).
+
 # Opis
 
 Projekt zakłada stworzenie systemu do rejestracji na zajęcia na uczelni.

@@ -1,13 +1,13 @@
 use Mix.Config
 
-# Configure your database
-config :plan_picker, PlanPicker.Repo,
-  username: "postgres",
-  password: "postgres",
-  database: "plan_picker_dev",
-  hostname: "localhost",
-  show_sensitive_data_on_connection_error: true,
-  pool_size: 10
+config :plan_picker,
+       PlanPicker.Repo,
+       username: System.get_env("PGUSER", "postgres"),
+       password: System.get_env("PGPASSWORD", "postgres"),
+       database: System.get_env("PGDATABASE", "plan_picker_dev"),
+       hostname: System.get_env("PGHOST", "localhost"),
+       show_sensitive_data_on_connection_error: true,
+       pool_size: 10
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
