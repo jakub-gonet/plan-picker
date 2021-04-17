@@ -134,9 +134,13 @@ defmodule PlanPicker.Repo.Migrations.AddInitialSchema do
   end
 
   defp add_enrollments do
+    create_query = "CREATE TYPE enrollment_state AS ENUM ('closed', 'opened', 'finished')"
+    drop_query = "DROP TYPE enrollment_state"
+    execute(create_query, drop_query)
+
     create table(:enrollments) do
       add :name, :string
-      add :state, :string
+      add :state, :enrollment_state
 
       timestamps()
     end

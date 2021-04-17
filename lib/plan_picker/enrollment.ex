@@ -4,7 +4,7 @@ defmodule PlanPicker.Enrollment do
 
   schema "enrollments" do
     field :name, :string
-    field :state, :string
+    field :state, Ecto.Enum, values: [:closed, :opened, :finished]
 
     many_to_many :users, PlanPicker.Accounts.User, join_through: "enrollments_users"
     has_many :subjects, PlanPicker.Subject
