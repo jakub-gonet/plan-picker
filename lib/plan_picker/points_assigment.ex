@@ -1,4 +1,4 @@
-defmodule PlanPicker.PointsAssigments do
+defmodule PlanPicker.PointsAssigment do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -10,8 +10,8 @@ defmodule PlanPicker.PointsAssigments do
   end
 
   @doc false
-  def changeset(points_assigments, attrs) do
-    points_assigments
+  def changeset(points_assigment, attrs) do
+    points_assigment
     |> cast(attrs, [:points])
     |> validate_required([:points])
   end

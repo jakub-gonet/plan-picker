@@ -7,7 +7,7 @@ defmodule PlanPicker.Term do
     field :location, :string
     field :week_type, :string
     belongs_to :class, PlanPicker.Class
-    has_many :points_assignments, PlanPicker.PointsAssigments
+    has_many :points_assignments, PlanPicker.PointsAssigment
 
     timestamps()
   end
