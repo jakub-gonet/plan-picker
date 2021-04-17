@@ -3,7 +3,7 @@ defmodule PlanPicker.Repo.Migrations.CreateClasses do
 
   def change do
     create table(:classes) do
-      add :type, :string
+      add :type, :string, null: false
       add :teacher_id, references(:teachers, on_delete: :delete_all)
       add :subject_id, references(:subjects, on_delete: :delete_all)
 

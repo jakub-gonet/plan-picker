@@ -7,7 +7,7 @@ defmodule PlanPicker.Repo.Migrations.CreateRoles do
     execute(create_query, drop_query)
 
     create table(:roles) do
-      add :name, :user_role
+      add :name, :user_role, null: false
       add :user_id, references(:users)
       timestamps()
     end

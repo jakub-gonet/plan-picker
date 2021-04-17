@@ -3,8 +3,8 @@ defmodule PlanPicker.Repo.Migrations.CreateTeachers do
 
   def change do
     create table(:teachers) do
-      add :name, :string
-      add :surname, :string
+      add :name, :string, null: false
+      add :surname, :string, null: false
 
       timestamps()
     end

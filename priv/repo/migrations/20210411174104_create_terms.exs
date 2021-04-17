@@ -7,7 +7,7 @@ defmodule PlanPicker.Repo.Migrations.CreateTerms do
     execute(create_query, drop_query)
 
     create table(:terms) do
-      add :interval, :tstzrange
+      add :interval, :tstzrange, null: false
       add :location, :string
       add :week_type, :week_type
       add :class_id, references(:classes, on_delete: :delete_all)
