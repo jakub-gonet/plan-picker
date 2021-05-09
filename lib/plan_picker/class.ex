@@ -9,6 +9,8 @@ defmodule PlanPicker.Class do
 
     many_to_many(:users, PlanPicker.Accounts.User, join_through: "classes_users")
 
+    has_many :points_assignments, PlanPicker.PointsAssigment
+
     timestamps()
   end
 
