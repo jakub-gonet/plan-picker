@@ -2,7 +2,6 @@ defmodule PlanPicker.Enrollment do
   use PlanPicker.Schema
   import Ecto.Changeset
   import Ecto.Query, only: [from: 2]
-  import Ecto, only: [assoc: 2]
 
   schema "enrollments" do
     field :name, :string

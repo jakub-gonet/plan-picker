@@ -150,7 +150,19 @@ defmodule PlanPickerWeb.UserAuth do
     else
       conn
       |> put_flash(:error, "You do not have required permissions to view this page.")
-      |> redicrect(to: Routes.)
+      |> redirect(to: Routes.user_session_path(conn, :new))
+      |> halt()
+    end
+  end
+
+  def require_admin_role(conn, _opts) do
+    if PlanPicker.Role.has_role?(conn.assigns[:current_user], :admin) do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You do not have required permissions to view this page.")
+      |> redirect(to: Routes.user_session_path(conn, :new))
+      |> halt()
     end
   end
 

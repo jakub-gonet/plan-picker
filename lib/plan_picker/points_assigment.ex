@@ -5,7 +5,7 @@ defmodule PlanPicker.PointsAssigment do
   schema "points_assignments" do
     field :points, :integer
     belongs_to :user, PlanPicker.Accounts.User
-    belongs_to :term, PlanPicker.Term
+    belongs_to :class, PlanPicker.Class
     timestamps()
   end
 

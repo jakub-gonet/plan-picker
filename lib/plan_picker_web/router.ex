@@ -68,8 +68,27 @@ defmodule PlanPickerWeb.Router do
     get "/enrollments/", EnrollmentController, :get_enrollments_for_current_user
   end
 
+  # moderator or admin routes
   scope "/manage/", PlanPickerWeb do
     pipe_through [:browser, :require_authenticated_user, :require_moderator_role]
+
+    # get "/enrollments/" # index
+    # get "/enrollments/:id" # edit
+    # put "/enrollments/:id" # update
+  end
+
+  # admin only routes
+  scope "/manage/", PlanPickerWeb do
+    pipe_through [:browser, :require_authenticated_user, :require_admin_role]
+
+    # post "/enrollments/" # create
+    # delete "/enrollments/:id # delete
+
+    # get "/users/" # index
+    # get "/users/:id" # show
+    # put "/users/:id" # update
+    # post "/users/" # create
+    # delete "/users/:id" # delete
   end
 
   scope "/", PlanPickerWeb do
