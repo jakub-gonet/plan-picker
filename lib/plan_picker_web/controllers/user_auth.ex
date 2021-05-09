@@ -139,6 +139,21 @@ defmodule PlanPickerWeb.UserAuth do
     end
   end
 
+  @doc """
+  Used for routes only accessible to admin or higher.
+
+  Requires a user to be authenticated (connection must be piped through :require_authenticated_user first)
+  """
+  def require_moderator_role(conn, _opts) do
+    if PlanPicker.Role.has_role?(conn.assigns[:current_user], :moderator) do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You do not have required permissions to view this page.")
+      |> redicrect(to: Routes.)
+    end
+  end
+
   defp maybe_store_return_to(%{method: "GET"} = conn) do
     put_session(conn, :user_return_to, current_path(conn))
   end

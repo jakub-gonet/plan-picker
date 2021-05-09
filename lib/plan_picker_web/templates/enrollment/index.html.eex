@@ -1,0 +1,7 @@
+<h1> Your enrollments </h1>
+
+<ul>
+    <%= for enrollment <- @enrollments do %>
+        <li> <%= enrollment.name %> (<%= enrollment.state %>) </li>
+    <% end %>
+</ul>

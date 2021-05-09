@@ -64,6 +64,12 @@ defmodule PlanPickerWeb.Router do
     get "/users/settings", UserSettingsController, :edit
     put "/users/settings", UserSettingsController, :update
     get "/users/settings/confirm_email/:token", UserSettingsController, :confirm_email
+
+    get "/enrollments/", EnrollmentController, :get_enrollments_for_current_user
+  end
+
+  scope "/manage/", PlanPickerWeb do
+    pipe_through [:browser, :require_authenticated_user, :require_moderator_role]
   end
 
   scope "/", PlanPickerWeb do
