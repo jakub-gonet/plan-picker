@@ -28,6 +28,7 @@ defmodule PlanPicker.Role do
   def assign_role(user, role_name) do
     if not has_role?(user, role_name) do
       %PlanPicker.Role{name: role_name}
+      |> PlanPicker.Repo.preload(:user)
       |> Ecto.Changeset.change()
       |> Ecto.Changeset.put_assoc(:user, user)
       |> PlanPicker.Repo.insert!()
