@@ -1,0 +1,12 @@
+<h1><%= @subject.name %></h1>
+<ul>
+    <%= if length(@subject.classes) > 0 do %>
+        <%= for class <- @subject.classes do %>
+            <li>
+                <%= class.id %>
+            </li>
+        <% end %>
+    <% else %>
+        There are no classes for this subject.
+    <% end %>
+</ul>

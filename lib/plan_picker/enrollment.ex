@@ -39,10 +39,35 @@ defmodule PlanPicker.Enrollment do
     |> PlanPicker.Repo.update!()
   end
 
+  def create_enrollment(enrollment_params) do
+    %PlanPicker.Enrollment{}
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_change(:state, :closed)
+    |> PlanPicker.Enrollment.changeset(enrollment_params)
+    |> PlanPicker.Repo.insert!()
+  end
+
+  def update_enrollment(enrollment_id, enrollment_params) do
+    PlanPicker.Enrollment
+    |> PlanPicker.Repo.get!(enrollment_id)
+    |> PlanPicker.Enrollment.changeset(enrollment_params)
+    |> PlanPicker.Repo.update!()
+  end
+
+  def delete_enrollment(enrollment_id) do
+    PlanPicker.Enrollment
+    |> PlanPicker.Repo.get!(enrollment_id)
+    |> PlanPicker.Repo.delete!()
+  end
+
   @doc false
   def changeset(enrollments, attrs) do
     enrollments
     |> cast(attrs, [:name, :state])
     |> validate_required([:name, :state])
+  end
+
+  def state_options do
+    [:closed, :opened, :finished]
   end
 end
