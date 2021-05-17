@@ -1,0 +1,7 @@
+<h1>Users</h1>
+
+<%= for user <- @users do %>
+    <li>
+        <%= user.email %>, <%= user.name %>, <%= user.index_no %>
+    </li>
+<% end %>
