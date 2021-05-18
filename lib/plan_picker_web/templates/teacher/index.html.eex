@@ -1,4 +1,6 @@
 <h1>Teachers</h1>
+<%= link "Add teacher", to: Routes.teacher_path(@conn, :new) %>
+<br>
 <ul>
     <%= for teacher <- @teachers do %>
         <li> <%= teacher.name %> <%= teacher.surname %> </li>
