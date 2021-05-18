@@ -1,0 +1,4 @@
+<h1> Class in <%= if @class.subject do @class.subject.name else "nil" end %> </h1>
+<%= link "Go back to subject", to: Routes.subject_path(@conn, :show, @class.subject.id) %>
+<br>
+Taught by <%= if @class.teacher do @class.teacher.name <> " " <> @class.teacher.surname else "nil" end %>

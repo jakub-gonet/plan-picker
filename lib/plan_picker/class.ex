@@ -14,6 +14,21 @@ defmodule PlanPicker.Class do
     timestamps()
   end
 
+  def add_class(class_attrs, subject) do
+    %PlanPicker.Class{}
+    |> changeset(class_attrs)
+    |> Ecto.Changeset.put_assoc(:subject, subject)
+    |> PlanPicker.Repo.insert!()
+  end
+
+  def assign_teacher(class, teacher) do
+    class
+    |> PlanPicker.Repo.preload(:teacher)
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:teacher, teacher)
+    |> PlanPicker.Repo.update!()
+  end
+
   @doc false
   def changeset(class, attrs) do
     class

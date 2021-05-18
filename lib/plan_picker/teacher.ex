@@ -10,6 +10,12 @@ defmodule PlanPicker.Teacher do
     timestamps()
   end
 
+  def add_teacher(teacher_attrs) do
+    %PlanPicker.Teacher{}
+    |> changeset(teacher_attrs)
+    |> PlanPicker.Repo.insert!()
+  end
+
   @doc false
   def changeset(teacher, attrs) do
     teacher

@@ -79,6 +79,16 @@ defmodule PlanPickerWeb.Router do
 
     get "/subjects/:subject_id/", SubjectController, :show
     get "/subjects/:subject_id/edit/", SubjectController, :edit
+
+    get "/classes/:id", ClassController, :show
+    get "/subjects/:subject_id/classes/new", ClassController, :new
+    post "/classes/", ClassController, :create
+    get "/classes/:class_id/assign_teacher", ClassController, :assign_teacher
+    get "/classes/:class_id/put_teacher", ClassController, :put_teacher
+
+    get "/teachers/", TeacherController, :index
+    get "/teachers/new", TeacherController, :new
+    post "/teachers/", TeacherController, :create
   end
 
   # admin only routes

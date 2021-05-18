@@ -21,7 +21,7 @@ defmodule PlanPickerWeb.SubjectController do
   def show(conn, %{"subject_id" => subject_id}) do
     subject = PlanPicker.Subject
     |> PlanPicker.Repo.get!(subject_id)
-    |> PlanPicker.Repo.preload(:classes)
+    |> PlanPicker.Repo.preload([:classes, :enrollment])
 
     render(conn, "show.html", subject: subject)
   end
