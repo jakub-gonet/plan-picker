@@ -2,3 +2,19 @@
 <%= link "Go back to subject", to: Routes.subject_path(@conn, :show, @class.subject.id) %>
 <br>
 Taught by <%= if @class.teacher do @class.teacher.name <> " " <> @class.teacher.surname else "nil" end %>
+<h2> Terms </h2>
+<%= link "Add term", to: Routes.term_path(@conn, :new, @class.id) %>
+<br>
+<%= if length(@class.terms) > 0 do %>
+    <ol>
+        <%= for term <- @class.terms do %>
+            <li>
+                <%= link to: Routes.term_path(@conn, :show, term.id) do %>
+                    <%= term.interval %> <%= term.week_type %>, <%= term.location %>
+                <% end %>
+            </li>
+        <% end %>
+    </ol>
+<% else %>
+    There are no terms in this class
+<% end %>

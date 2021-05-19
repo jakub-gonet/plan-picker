@@ -11,6 +11,8 @@ defmodule PlanPicker.Class do
 
     has_many :points_assignments, PlanPicker.PointsAssigment
 
+    has_many :terms, PlanPicker.Term
+
     timestamps()
   end
 

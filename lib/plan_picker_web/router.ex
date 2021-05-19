@@ -86,6 +86,10 @@ defmodule PlanPickerWeb.Router do
     get "/classes/:class_id/assign_teacher", ClassController, :assign_teacher
     get "/classes/:class_id/put_teacher", ClassController, :put_teacher
 
+    get "/terms/:id", TermController, :show
+    get "/classes/:class_id/terms/new", TermController, :new
+    post "/terms/", TermController, :create
+
     get "/teachers/", TeacherController, :index
     get "/teachers/new", TeacherController, :new
     post "/teachers/", TeacherController, :create

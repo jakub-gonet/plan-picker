@@ -1,0 +1,6 @@
+<h1> Term details </h1>
+<%= link "Back to class", to: Routes.class_path(@conn, :show, @term.class.id) %>
+<br>
+<%= @term.interval %> <%= @term.week_type %>
+<br>
+<%= @term.location %>

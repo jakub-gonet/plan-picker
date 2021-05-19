@@ -4,7 +4,7 @@ defmodule PlanPickerWeb.ClassController do
   def show(conn, %{"id" => class_id}) do
     class = PlanPicker.Class
     |> PlanPicker.Repo.get!(class_id)
-    |> PlanPicker.Repo.preload([:subject, :teacher, :users, :points_assignments])
+    |> PlanPicker.Repo.preload([:subject, :terms, :teacher, :users, :points_assignments])
 
     render(conn, "show.html", class: class)
   end
