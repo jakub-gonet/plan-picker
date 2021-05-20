@@ -84,7 +84,7 @@ Ważniejsze pliki:
 - `priv/repo/migrations/20210417133131_add_initial_schema.exs` - schemat bazy danych opisany przy pomocy DSL podbiblioteki Ecto służącej do migracji
 - `priv/repo/seeds.exs` - początkowe dane wczytane przy mix ecto.setup
 - `lib/plan_picker_web/router.ex` - definicje ścieżek dostępnych z przeglądarki
-- `lib/plan_picker_web/controllers/<nazwa>_kontroler` - kontroler modelu o nazwie `<nazwa>`
+- `lib/plan_picker_web/controllers/<nazwa>_kontroller` - kontroler modelu o nazwie `<nazwa>`
 - `config/config.exs` - konfiguracja bibliotek, w plikach `dev.exs` i `prod.exs` znajdują się nadpisania dla środowiska deweloperskiego i produkcyjnego
 
 # Aktorzy
