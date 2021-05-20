@@ -1,0 +1,11 @@
+<h1> Welcome to Plan Picker </h1>
+<ul>
+<li><%= link "View your enrollments", to: Routes.enrollment_path(@conn, :get_enrollments_for_current_user) %></li>
+<%= if @is_moderator do %>
+    <li><%= link "Manage enrollments", to: Routes.enrollment_path(@conn, :index) %></li>
+<% end %>
+<%= if @is_admin do %>
+    <li><%= link "Manage accounts", to: Routes.user_path(@conn, :index) %></li>
+    <li><%= link "Manage teachers", to: Routes.teacher_path(@conn, :index) %></li>
+<% end %>
+</ul>
