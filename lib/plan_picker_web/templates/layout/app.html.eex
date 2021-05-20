@@ -13,12 +13,18 @@
     <header>
       <section class="">
         <nav role="navigation" class="row">
-            <div class="column column-offset-90">
-              <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
-                <ul><li><%= link "Live dashboard", to: Routes.live_dashboard_path(@conn, :home) %></li></ul>
-              <% end %>
-              <%= render "_user_menu.html", assigns %>
-            </div>
+        <div class="column column-10 ">
+          <img src="<%= Routes.static_path(@conn, "/favicon.svg") %>" class="logo">
+        </div>
+        <div class="column">
+          <h1>Plan picker</h1>
+        </div>
+        <div class="column column-offset-60">
+          <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
+            <ul><li><%= link "Live dashboard", to: Routes.live_dashboard_path(@conn, :home) %></li></ul>
+          <% end %>
+          <%= render "_user_menu.html", assigns %>
+        </div>
         </nav>
       </section>
     </header>

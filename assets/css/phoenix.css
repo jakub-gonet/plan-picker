@@ -65,6 +65,10 @@ select {
   display: block;
 }
 
+.logo {
+  max-width: 80px;
+}
+
 /* Headers */
 header {
   width: 100%;
@@ -78,12 +82,7 @@ header section {
   flex-direction: column;
   justify-content: space-between;
 }
-header section :first-child {
-  order: 2;
-}
-header section :last-child {
-  order: 1;
-}
+
 header nav ul,
 header nav li {
   margin: 0;
