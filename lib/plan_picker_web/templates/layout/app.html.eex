@@ -12,7 +12,7 @@
     <header>
       <section class="">
         <nav role="navigation" class="row">
-            <div class="column column-bottom">
+            <div class="column column-offset-90">
               <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
                 <ul><li><%= link "Live dashboard", to: Routes.live_dashboard_path(@conn, :home) %></li></ul>
               <% end %>
