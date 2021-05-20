@@ -1,5 +1,18 @@
 # Projekt z baz danych 2 – Karol Wilk, Jakub Gonet
 
+# Opis
+
+Projekt zakłada stworzenie systemu do rejestracji na zajęcia na uczelni.
+Studenci zostają przypisani do odpowiedniej grupy rocznikowej oraz są w stanie przydzielić punkty na poszczególne terminy zajęć z przedmiotów.
+
+Po zamknięciu zapisów moderatorzy roku przypisują studentów do grup uwzględniając ich preferencje.
+Po zakończeniu przydziału do grup studenci mogą zobaczyć wybrany plan.
+
+# Technologie
+
+Do stworzenia aplikacji wykorzystano język [Elixir](http://elixir-lang.org/) i framework [Phoenix](https://phoenixframework.org/).
+Silnikiem bazodanowym jest [PostgreSQL](https://www.postgresql.org/), używamy biblioteki [Ecto](https://hexdocs.pm/ecto/Ecto.html) ułatwiającej operacje na bazie danych.
+
 # Instalacja
 
 ## Docker
@@ -13,7 +26,7 @@ docker-compose up
 ```bash
 mix deps.get
 mix ecto.setup
-cd assets && npm install && cd ..
+(cd assets && npm install)
 
 # Włączenie serwera
 mix phx.server
@@ -21,12 +34,58 @@ mix phx.server
 
 Serwer działa pod adresem [http://localhost:4000/](http://localhost:4000/).
 
-# Opis
+# Struktura projektu
 
-Projekt zakłada stworzenie systemu do rejestracji na zajęcia na uczelni.
-Studenci zostają przypisani do odpowiedniej grupy rocznikowej oraz są w stanie przydzielić punkty na poszczególne terminy zajęć.
+Phoenix generuje parę folderów przy tworzeniu nowego projektu.
 
-Po zamknięciu zapisów moderatorzy roku przypisują studentów do grup uwzględniając ich preferencje. Po zakończeniu przydziału do grup studenci mogą zobaczyć wybrany plan.
+```
+tree -d -L 3 -I 'node_modules|deps' .
+
+.
+├── assets               # zasoby potrzebne do zbudowania strony - js, css, obrazki i fonty
+│   ├── css
+│   ├── js
+│   └── static
+|       ├── fonts
+│       └── images
+├── config               # konfiguracja bibliotek - serwera http, drivera bazy danych, etc
+├── lib                  # kod aplikacji
+│   ├── plan_picker      # kod biznesowy, zawiera modele
+│   │   ├── accounts
+│   │   └── timestamp
+│   └── plan_picker_web  # część webowa, oparta o MVC
+│       ├── channels
+│       ├── controllers
+│       ├── templates    # w Phoenixie katalog views/ to głównie helpery, w templates znajduje się renderowany html
+│       └── views
+├── priv                 # zasoby, które nie są kodem źródłowym - migracje baz danych, translacje, pliki statyczne (kopiowane automatycznie z assets/)
+│   ├── gettext
+│   │   └── en
+│   ├── repo
+│   │   └── migrations   # migracje, które definiują schemat bazy przy uruchomieniu mix ecto.setup
+│   └── static
+│       ├── css
+│       ├── fonts
+│       ├── images
+│       └── js
+└── test                 # testy
+    ├── plan_picker
+    ├── plan_picker_web
+    │   ├── controllers
+    │   └── views
+    └── support
+        └── fixtures
+```
+
+Więcej o budowie projektu pod [tym linkiem](https://hexdocs.pm/phoenix/directory_structure.html).
+
+Ważniejsze pliki:
+
+- `priv/repo/migrations/20210417133131_add_initial_schema.exs` - schemat bazy danych opisany przy pomocy DSL podbiblioteki Ecto służącej do migracji
+- `priv/repo/seeds.exs` - początkowe dane wczytane przy mix ecto.setup
+- `lib/plan_picker_web/router.ex` - definicje ścieżek dostępnych z przeglądarki
+- `lib/plan_picker_web/controllers/<nazwa>_kontroler` - kontroler modelu o nazwie `<nazwa>`
+- `config/config.exs` - konfiguracja bibliotek, w plikach `dev.exs` i `prod.exs` znajdują się nadpisania dla środowiska deweloperskiego i produkcyjnego
 
 # Aktorzy
 
