@@ -10,12 +10,14 @@
   </head>
   <body>
     <header>
-      <section class="container">
-        <nav role="navigation">
-            <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
-              <li><%= link "Live dashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
-            <% end %>
-          <%= render "_user_menu.html", assigns %>
+      <section class="">
+        <nav role="navigation" class="row">
+            <div class="column column-bottom">
+              <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
+                <ul><li><%= link "Live dashboard", to: Routes.live_dashboard_path(@conn, :home) %></li></ul>
+              <% end %>
+              <%= render "_user_menu.html", assigns %>
+            </div>
         </nav>
       </section>
     </header>
