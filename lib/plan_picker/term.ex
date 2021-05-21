@@ -25,7 +25,13 @@ defmodule PlanPicker.Term do
   @doc false
   def changeset(term, attrs) do
     term
-    |> cast(attrs, [:location, :week_type, :interval_time_start, :interval_time_end, :interval_day_offset])
+    |> cast(attrs, [
+      :location,
+      :week_type,
+      :interval_time_start,
+      :interval_time_end,
+      :interval_day_offset
+    ])
     |> set_interval()
     |> validate_required([:interval, :location, :week_type])
   end
@@ -34,15 +40,20 @@ defmodule PlanPicker.Term do
     from = get_field(changeset, :interval_time_start)
     to = get_field(changeset, :interval_time_end)
     offset = get_field(changeset, :interval_day_offset)
+
     if from && to && offset do
-      interval_start = DateTime.new!(
-        Date.new!(1996, 1, 1 + offset),
-        from
-      )
-      interval_end = DateTime.new!(
-        Date.new!(1996, 1, 1 + offset),
-        to
-      )
+      interval_start =
+        DateTime.new!(
+          Date.new!(1996, 1, 1 + offset),
+          from
+        )
+
+      interval_end =
+        DateTime.new!(
+          Date.new!(1996, 1, 1 + offset),
+          to
+        )
+
       put_change(changeset, :interval, Timestamp.Range.new(interval_start, interval_end))
     else
       changeset
