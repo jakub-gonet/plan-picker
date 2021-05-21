@@ -1,18 +1,6 @@
 <h1><%= @enrollment.name %></h1>
 <h2>State: <%= @enrollment.state %></h2>
-<h2>Subjects</h2>
-<ol>
-    <%= link "Add subject", to: Routes.subject_path(@conn, :new, @enrollment.id) %>
-    <%= if length(@enrollment.subjects) > 0 do %>
-        <%= for subject <- @enrollment.subjects do %>
-            <li>
-                <%= link subject.name, to: Routes.subject_path(@conn, :show, subject.id) %>
-            </li>
-        <% end %>
-    <% else %>
-        There are no subjects in this enrollment.
-    <% end %>
-</ol>
+
 <h2>Assigned users</h2>
 <ol>
     <%= if length(@enrollment.users) > 0 do %>

@@ -6,6 +6,5 @@
 <% end %>
 <%= if @is_admin do %>
     <li><%= link "Manage accounts", to: Routes.user_path(@conn, :index) %></li>
-    <li><%= link "Manage teachers", to: Routes.teacher_path(@conn, :index) %></li>
 <% end %>
 </ul>
