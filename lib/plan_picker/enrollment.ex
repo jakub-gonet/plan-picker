@@ -17,10 +17,12 @@ defmodule PlanPicker.Enrollment do
     Gets all enrollments a user is assigned to.
   """
   def get_enrollments_for_user(user) do
-    query = from e in PlanPicker.Enrollment,
-      join: u in assoc(e, :users),
-      where: u.id == ^user.id,
-      select: e
+    query =
+      from e in PlanPicker.Enrollment,
+        join: u in assoc(e, :users),
+        where: u.id == ^user.id,
+        select: e
+
     PlanPicker.Repo.all(query)
   end
 
@@ -29,9 +31,10 @@ defmodule PlanPicker.Enrollment do
   """
   def assign_user_to_enrollment(enrollment, user) do
     # fetch enrollment with associations
-    enrollment = PlanPicker.Enrollment
-    |> PlanPicker.Repo.get!(enrollment.id)
-    |> PlanPicker.Repo.preload(:users)
+    enrollment =
+      PlanPicker.Enrollment
+      |> PlanPicker.Repo.get!(enrollment.id)
+      |> PlanPicker.Repo.preload(:users)
 
     enrollment
     |> Ecto.Changeset.change()
@@ -40,9 +43,8 @@ defmodule PlanPicker.Enrollment do
   end
 
   def create_enrollment(enrollment_params) do
-    %PlanPicker.Enrollment{}
+    %PlanPicker.Enrollment{state: :closed}
     |> Ecto.Changeset.change()
-    |> Ecto.Changeset.put_change(:state, :closed)
     |> PlanPicker.Enrollment.changeset(enrollment_params)
     |> PlanPicker.Repo.insert!()
   end
