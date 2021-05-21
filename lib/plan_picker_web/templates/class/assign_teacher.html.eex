@@ -1,9 +1,0 @@
-<h1> Assign a teacher to the class </h1>
-
-<ul>
-    <%= for teacher <- @teachers do %>
-        <li>
-            <%= link "#{teacher.name} #{teacher.surname}", to: Routes.class_path(@conn, :put_teacher, @class_id, %{"teacher_id" =>  teacher.id}) %>
-        </li>
-    <% end %>
-</ul>

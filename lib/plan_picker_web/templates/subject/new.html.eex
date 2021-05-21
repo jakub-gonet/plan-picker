@@ -1,8 +1,0 @@
-<h1>Add subject</h1>
-
-<%= form_for @changeset, Routes.subject_path(@conn, :create, @enrollment_id), [], fn f -> %>
-    <%= label f, :name, "Subject name" %>
-    <%= text_input f, :name %>
-    <%= error_tag f, :name %>
-    <%= submit "Create subject" %>
-<% end %>

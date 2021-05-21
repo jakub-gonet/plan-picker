@@ -1,4 +1,4 @@
-defmodule PlanPickerWeb.UserResetPasswordController do
+defmodule PlanPickerWeb.Accounts.UserResetPasswordController do
   use PlanPickerWeb, :controller
 
   alias PlanPicker.Accounts

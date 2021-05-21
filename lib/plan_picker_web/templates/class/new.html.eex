@@ -1,9 +1,0 @@
-<h1>Create a new class</h1>
-
-<%= form_for @changeset, Routes.class_path(@conn, :create, %{"subject_id" => @subject_id}), [], fn f -> %>
-    <%= label f, :type, "Class type" %>
-    <%= text_input f, :type %>
-    <%= error_tag f, :type %>
-
-    <%= submit "Create class" %>
-<% end %>
