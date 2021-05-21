@@ -103,8 +103,5 @@ defmodule PlanPickerWeb.Router do
     delete "/enrollments/:id", EnrollmentController, :delete
 
     get "/users/", UserController, :index
-    # get "/users/:id" # show
-    # put "/users/:id" # update
-    # delete "/users/:id" # delete
   end
 end
