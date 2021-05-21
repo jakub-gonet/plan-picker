@@ -2,14 +2,16 @@ defmodule PlanPickerWeb.EnrollmentController do
   use PlanPickerWeb, :controller
 
   def get_enrollments_for_current_user(conn, _params) do
-    enrollments = conn.assigns[:current_user]
-    |> PlanPicker.Enrollment.get_enrollments_for_user()
+    enrollments =
+      conn.assigns[:current_user]
+      |> PlanPicker.Enrollment.get_enrollments_for_user()
 
     render(conn, "index.html", enrollments: enrollments)
   end
 
   def index(conn, _params) do
-    enrollments = PlanPicker.Enrollment
+    enrollments =
+      PlanPicker.Enrollment
       |> PlanPicker.Repo.all()
 
     render(conn, "index.html", enrollments: enrollments)
@@ -22,15 +24,18 @@ defmodule PlanPickerWeb.EnrollmentController do
 
   def create(conn, %{"enrollment" => enrollment_params}) do
     enrollment = PlanPicker.Enrollment.create_enrollment(enrollment_params)
+
     conn
     |> redirect(to: Routes.enrollment_path(conn, :show, enrollment.id))
   end
 
   def show(conn, %{"id" => enrollment_id}) do
-    enrollment = PlanPicker.Enrollment
-    |> PlanPicker.Repo.get!(enrollment_id)
-    |> PlanPicker.Repo.preload(:users)
-    |> PlanPicker.Repo.preload(:subjects)
+    enrollment =
+      PlanPicker.Enrollment
+      |> PlanPicker.Repo.get!(enrollment_id)
+      |> PlanPicker.Repo.preload(:users)
+      |> PlanPicker.Repo.preload(:subjects)
+
     conn
     |> render("show.html", enrollment: enrollment)
   end
@@ -44,14 +49,20 @@ defmodule PlanPickerWeb.EnrollmentController do
   end
 
   def edit(conn, %{"id" => enrollment_id}) do
-    changeset = PlanPicker.Enrollment
-    |> PlanPicker.Repo.get!(enrollment_id)
-    |> PlanPicker.Repo.preload(:users)
-    |> PlanPicker.Repo.preload(:subjects)
-    |> Ecto.Changeset.change()
-    |> Ecto.Changeset.cast(%{}, [:id])
+    changeset =
+      PlanPicker.Enrollment
+      |> PlanPicker.Repo.get!(enrollment_id)
+      |> PlanPicker.Repo.preload(:users)
+      |> PlanPicker.Repo.preload(:subjects)
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.cast(%{}, [:id])
+
     conn
-    |> render("edit.html", changeset: changeset, state_options: PlanPicker.Enrollment.state_options, enrollment_id: enrollment_id)
+    |> render("edit.html",
+      changeset: changeset,
+      state_options: PlanPicker.Enrollment.state_options(),
+      enrollment_id: enrollment_id
+    )
   end
 
   def update(conn, %{"enrollment" => enrollment_params, "id" => enrollment_id}) do
