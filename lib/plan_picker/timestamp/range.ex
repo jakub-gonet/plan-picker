@@ -79,3 +79,14 @@ defimpl Inspect, for: Timestamp.Range do
     "#Timestamp.Range<#{start_paren}#{inspect(range_start)}, #{inspect(range_end)}#{end_paren}>"
   end
 end
+
+defimpl Phoenix.HTML.Safe, for: Timestamp.Range do
+  def to_iodata(
+    %Timestamp.Range{
+      start: range_start,
+      end: range_end,
+    }
+  ) do
+    "#{Phoenix.HTML.Safe.to_iodata(range_start)} - #{Phoenix.HTML.Safe.to_iodata(range_end)}"
+  end
+end

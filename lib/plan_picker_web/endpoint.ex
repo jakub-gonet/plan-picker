@@ -20,11 +20,13 @@ defmodule PlanPickerWeb.Endpoint do
   #
   # You should set gzip to true if you are running phx.digest
   # when deploying your static files in production.
+
+  # favicon made by Freepik
   plug Plug.Static,
     at: "/",
     from: :plan_picker,
     gzip: false,
-    only: ~w(css fonts images js favicon.ico robots.txt)
+    only: ~w(css fonts images js favicon.ico favicon.svg robots.txt)
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.

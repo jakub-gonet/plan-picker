@@ -1,0 +1,2 @@
+<h1> Welcome to Plan Picker </h1>
+Please <%= link "log in", to: Routes.user_session_path(@conn, :new) %> or <%= link "register", to: Routes.user_registration_path(@conn, :new) %> to proceed.

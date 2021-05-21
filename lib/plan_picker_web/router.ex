@@ -45,7 +45,7 @@ defmodule PlanPickerWeb.Router do
 
   ## Authentication routes
 
-  scope "/", PlanPickerWeb do
+  scope "/", PlanPickerWeb.Accounts do
     pipe_through [:browser, :redirect_if_user_is_authenticated]
 
     get "/users/register", UserRegistrationController, :new
@@ -58,7 +58,20 @@ defmodule PlanPickerWeb.Router do
     put "/users/reset_password/:token", UserResetPasswordController, :update
   end
 
-  scope "/", PlanPickerWeb do
+  ## Session management routes
+
+  scope "/", PlanPickerWeb.Accounts do
+    pipe_through [:browser]
+
+    delete "/users/log_out", UserSessionController, :delete
+    get "/users/confirm", UserConfirmationController, :new
+    post "/users/confirm", UserConfirmationController, :create
+    get "/users/confirm/:token", UserConfirmationController, :confirm
+  end
+
+  ## User settings routes
+
+  scope "/", PlanPickerWeb.Accounts do
     pipe_through [:browser, :require_authenticated_user]
 
     get "/users/settings", UserSettingsController, :edit
@@ -67,11 +80,28 @@ defmodule PlanPickerWeb.Router do
   end
 
   scope "/", PlanPickerWeb do
-    pipe_through [:browser]
+    pipe_through [:browser, :require_authenticated_user]
+    get "/enrollments/", EnrollmentController, :get_enrollments_for_current_user
+  end
 
-    delete "/users/log_out", UserSessionController, :delete
-    get "/users/confirm", UserConfirmationController, :new
-    post "/users/confirm", UserConfirmationController, :create
-    get "/users/confirm/:token", UserConfirmationController, :confirm
+  # moderator or admin routes
+  scope "/manage/", PlanPickerWeb do
+    pipe_through [:browser, :require_authenticated_user, :require_moderator_role]
+
+    get "/enrollments/", EnrollmentController, :index
+    get "/enrollments/:id/show/", EnrollmentController, :show
+    get "/enrollments/:id/edit/", EnrollmentController, :edit
+    put "/enrollments/", EnrollmentController, :update
+  end
+
+  # admin only routes
+  scope "/manage/", PlanPickerWeb do
+    pipe_through [:browser, :require_authenticated_user, :require_admin_role]
+
+    get "/enrollments/new", EnrollmentController, :new
+    post "/enrollments/", EnrollmentController, :create
+    delete "/enrollments/:id", EnrollmentController, :delete
+
+    get "/users/", UserController, :index
   end
 end

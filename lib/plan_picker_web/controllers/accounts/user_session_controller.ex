@@ -1,4 +1,4 @@
-defmodule PlanPickerWeb.UserSessionController do
+defmodule PlanPickerWeb.Accounts.UserSessionController do
   use PlanPickerWeb, :controller
 
   alias PlanPicker.Accounts

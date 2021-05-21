@@ -11,6 +11,14 @@ defmodule PlanPicker.Subject do
     timestamps()
   end
 
+  def create_subject(subject_params, enrollment) do
+    %PlanPicker.Subject{}
+    |> changeset(subject_params)
+    |> Ecto.Changeset.put_assoc(:classes, [])
+    |> Ecto.Changeset.put_assoc(:enrollment, enrollment)
+    |> PlanPicker.Repo.insert!()
+  end
+
   @doc false
   def changeset(subject, attrs) do
     subject
