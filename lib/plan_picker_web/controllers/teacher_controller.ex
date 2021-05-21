@@ -2,14 +2,13 @@ defmodule PlanPickerWeb.TeacherController do
   use PlanPickerWeb, :controller
 
   def index(conn, _attr) do
-    teachers = PlanPicker.Teacher
-    |> PlanPicker.Repo.all()
+    teachers = PlanPicker.Repo.all(PlanPicker.Teacher)
+
     render(conn, "index.html", teachers: teachers)
   end
 
   def new(conn, _attr) do
-    changeset = %PlanPicker.Teacher{}
-    |> Ecto.Changeset.change()
+    changeset = Ecto.Changeset.change(%PlanPicker.Teacher{})
 
     render(conn, "new.html", changeset: changeset)
   end
