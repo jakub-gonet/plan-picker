@@ -45,7 +45,7 @@ defmodule PlanPickerWeb.Router do
 
   ## Authentication routes
 
-  scope "/", PlanPickerWeb do
+  scope "/", PlanPickerWeb.Accounts do
     pipe_through [:browser, :redirect_if_user_is_authenticated]
 
     get "/users/register", UserRegistrationController, :new
@@ -58,13 +58,29 @@ defmodule PlanPickerWeb.Router do
     put "/users/reset_password/:token", UserResetPasswordController, :update
   end
 
-  scope "/", PlanPickerWeb do
+  ## Session management routes
+
+  scope "/", PlanPickerWeb.Accounts do
+    pipe_through [:browser]
+
+    delete "/users/log_out", UserSessionController, :delete
+    get "/users/confirm", UserConfirmationController, :new
+    post "/users/confirm", UserConfirmationController, :create
+    get "/users/confirm/:token", UserConfirmationController, :confirm
+  end
+
+  ## User settings routes
+
+  scope "/", PlanPickerWeb.Accounts do
     pipe_through [:browser, :require_authenticated_user]
 
     get "/users/settings", UserSettingsController, :edit
     put "/users/settings", UserSettingsController, :update
     get "/users/settings/confirm_email/:token", UserSettingsController, :confirm_email
+  end
 
+  scope "/", PlanPickerWeb do
+    pipe_through [:browser, :require_authenticated_user]
     get "/enrollments/", EnrollmentController, :get_enrollments_for_current_user
   end
 
@@ -76,23 +92,6 @@ defmodule PlanPickerWeb.Router do
     get "/enrollments/:id/show/", EnrollmentController, :show
     get "/enrollments/:id/edit/", EnrollmentController, :edit
     put "/enrollments/", EnrollmentController, :update
-
-    get "/subjects/:subject_id/", SubjectController, :show
-    get "/subjects/:subject_id/edit/", SubjectController, :edit
-
-    get "/classes/:id", ClassController, :show
-    get "/subjects/:subject_id/classes/new", ClassController, :new
-    post "/classes/", ClassController, :create
-    get "/classes/:class_id/assign_teacher", ClassController, :assign_teacher
-    get "/classes/:class_id/put_teacher", ClassController, :put_teacher
-
-    get "/terms/:id", TermController, :show
-    get "/classes/:class_id/terms/new", TermController, :new
-    post "/terms/", TermController, :create
-
-    get "/teachers/", TeacherController, :index
-    get "/teachers/new", TeacherController, :new
-    post "/teachers/", TeacherController, :create
   end
 
   # admin only routes
@@ -103,21 +102,9 @@ defmodule PlanPickerWeb.Router do
     post "/enrollments/", EnrollmentController, :create
     delete "/enrollments/:id", EnrollmentController, :delete
 
-    get "/enrollments/:enrollment_id/subjects/new/", SubjectController, :new
-    post "/enrollments/:enrollment_id/subjects/", SubjectController, :create
-
     get "/users/", UserController, :index
     # get "/users/:id" # show
     # put "/users/:id" # update
     # delete "/users/:id" # delete
-  end
-
-  scope "/", PlanPickerWeb do
-    pipe_through [:browser]
-
-    delete "/users/log_out", UserSessionController, :delete
-    get "/users/confirm", UserConfirmationController, :new
-    post "/users/confirm", UserConfirmationController, :create
-    get "/users/confirm/:token", UserConfirmationController, :confirm
   end
 end
