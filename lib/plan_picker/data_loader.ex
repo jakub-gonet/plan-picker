@@ -19,6 +19,8 @@ defmodule PlanPicker.DataLoader do
         rows
         |> Utils.group_by([:subject, :group_number])
         |> Enum.each(fn {subject_name, groups} ->
+          # TODO
+          # credo:disable-for-next-line
           Enum.each(groups, fn {_group_n, terms} ->
             %{teacher: teacher_name} = unify_terms(terms)
             add_group(terms, subjects[subject_name], teachers[teacher_name])
