@@ -1,4 +1,4 @@
-defmodule PlanPicker.Grouper do
+defmodule PlanPicker.Utils do
   def group_by(data, keys) do
     Enum.reduce(data, %{}, fn x, acc ->
       keys =

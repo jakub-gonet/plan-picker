@@ -1,10 +1,10 @@
 defmodule PlanPicker.DataLoader do
   defdelegate import(path), to: PlanPicker.DataLoader.Csv
-  alias PlanPicker.{Class, Enrollment, Grouper, Subject, Term, Teacher, Repo}
+  alias PlanPicker.{Class, Enrollment, Utils, Subject, Term, Teacher, Repo}
 
   def load_imported_data_to_db(data) do
     Repo.transaction(fn ->
-      for {semester_n, rows} <- Grouper.group_by(data, [:semester]) do
+      for {semester_n, rows} <- Utils.group_by(data, [:semester]) do
         enrollment = Enrollment.create_enrollment(%{name: "#{semester_n} semestr"})
 
         subjects =
@@ -22,7 +22,7 @@ defmodule PlanPicker.DataLoader do
           |> Map.new()
 
         rows
-        |> Grouper.group_by([:subject, :group_number])
+        |> Utils.group_by([:subject, :group_number])
         |> Enum.each(fn {subject_name, groups} ->
           Enum.each(groups, fn {_group_n, terms} ->
             %{teacher: teacher_name} = unify_terms(terms)
