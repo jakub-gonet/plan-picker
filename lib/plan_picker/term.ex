@@ -31,7 +31,7 @@ defmodule PlanPicker.Term do
   end
 
   defp set_interval(changeset) do
-    {start: start_t, end: end_t, weekday: weekday} = get_field(changeset, :interval)
+    %{start: start_t, end: end_t, weekday: weekday} = get_field(changeset, :interval)
     if start_t && end_t && weekday do
       put_change(changeset, :interval, Timestamp.Range.from_time(start_t, end_t, weekday))
     else
