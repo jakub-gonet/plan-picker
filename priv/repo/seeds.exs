@@ -32,3 +32,7 @@ moderator =
   })
 
 PlanPicker.Role.assign_role(moderator, :moderator)
+
+"priv/repo/seeds/example_plan_data.csv"
+|> PlanPicker.DataLoader.import()
+|> PlanPicker.DataLoader.load_imported_data_to_db()

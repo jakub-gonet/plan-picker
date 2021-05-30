@@ -92,6 +92,7 @@ defmodule PlanPicker.Repo.Migrations.AddInitialSchema do
 
       timestamps()
     end
+
     create index(:classes, [:teacher_id])
     create index(:classes, [:subject_id])
 
@@ -101,6 +102,7 @@ defmodule PlanPicker.Repo.Migrations.AddInitialSchema do
 
       timestamps()
     end
+
     create unique_index(:classes_users, [:class_id, :user_id], name: :classes_users_unique_fk)
   end
 
@@ -117,8 +119,15 @@ defmodule PlanPicker.Repo.Migrations.AddInitialSchema do
 
       timestamps()
     end
-    create constraint("terms", :in_two_week_range, check: "interval <@ '[1996-01-01 00:00, 1996-01-14 00:00]'")
-    create constraint("terms", :no_overlap_in_group, exclude: "gist (class_id WITH =, interval WITH &&)")
+
+    create constraint("terms", :in_two_week_range,
+             check: "interval <@ '[1996-01-01 00:00, 1996-01-14 00:00]'"
+           )
+
+    create constraint("terms", :no_overlap_in_group,
+             exclude: "gist (class_id WITH =, interval WITH &&)"
+           )
+
     create index(:terms, [:class_id])
   end
 
@@ -130,7 +139,10 @@ defmodule PlanPicker.Repo.Migrations.AddInitialSchema do
 
       timestamps()
     end
-    create unique_index(:points_assignments, [:user_id, :term_id], name: "points_assignments_unique_index")
+
+    create unique_index(:points_assignments, [:user_id, :term_id],
+             name: "points_assignments_unique_index"
+           )
   end
 
   defp add_enrollments do
@@ -151,6 +163,9 @@ defmodule PlanPicker.Repo.Migrations.AddInitialSchema do
 
       timestamps()
     end
-    create unique_index(:enrollments_users, [:user_id, :enrollment_id], name: "enrollments_users_unique_fk")
+
+    create unique_index(:enrollments_users, [:user_id, :enrollment_id],
+             name: "enrollments_users_unique_fk"
+           )
   end
 end

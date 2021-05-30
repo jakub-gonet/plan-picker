@@ -1,6 +1,7 @@
 defmodule PlanPicker.Teacher do
   use PlanPicker.Schema
   import Ecto.Changeset
+  alias PlanPicker.Repo
 
   schema "teachers" do
     field :name, :string
@@ -10,10 +11,10 @@ defmodule PlanPicker.Teacher do
     timestamps()
   end
 
-  def add_teacher(teacher_attrs) do
+  def create_teacher!(teacher_attrs) do
     %PlanPicker.Teacher{}
     |> changeset(teacher_attrs)
-    |> PlanPicker.Repo.insert!()
+    |> Repo.insert!()
   end
 
   @doc false
