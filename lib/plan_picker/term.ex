@@ -1,6 +1,7 @@
 defmodule PlanPicker.Term do
   use PlanPicker.Schema
   import Ecto.Changeset
+  alias PlanPicker.Repo
 
   schema "terms" do
     field :interval, Timestamp.Range
@@ -15,11 +16,11 @@ defmodule PlanPicker.Term do
     timestamps()
   end
 
-  def add_term(term_attrs, class) do
+  def create_term!(term_attrs, class) do
     %PlanPicker.Term{}
     |> changeset(term_attrs)
-    |> Ecto.Changeset.put_assoc(:class, class)
-    |> PlanPicker.Repo.insert!()
+    |> put_assoc(:class, class)
+    |> Repo.insert!()
   end
 
   @doc false

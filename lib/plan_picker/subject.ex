@@ -12,7 +12,7 @@ defmodule PlanPicker.Subject do
     timestamps()
   end
 
-  def create_subject(subject_params, enrollment) do
+  def create_subject!(subject_params, enrollment) do
     %PlanPicker.Subject{}
     |> changeset(subject_params)
     |> put_assoc(:classes, [])
