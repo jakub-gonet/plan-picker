@@ -1,8 +1,11 @@
 defmodule Timestamp.Range do
   use Ecto.Type
 
-  @default_opts [lower_inclusive: true, upper_inclusive: false]
+  @year 1996
+  @month 1
+  @day 1
 
+  @default_opts [lower_inclusive: true, upper_inclusive: false]
   @enforce_keys [:start, :end]
   defstruct [:start, :end, opts: []]
 
@@ -24,6 +27,15 @@ defmodule Timestamp.Range do
       end: range_end,
       opts: opts
     }
+  end
+
+  def from_time(start_time, end_time, weekday, opts \\ []) do
+    offset = Timestamp.Day.get_offset(weekday)
+    date = Date.new!(@year, @month, @day + offset)
+
+    interval_start = DateTime.new!(date, start_time)
+    interval_end = DateTime.new!(date, end_time)
+    new(interval_start, interval_end, opts)
   end
 
   @impl Ecto.Type
