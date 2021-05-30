@@ -1,7 +1,7 @@
 defmodule PlanPicker.Class do
   use PlanPicker.Schema
   import Ecto.Changeset
-  alias PlanPicker.Repo
+  alias PlanPicker.{Repo, Subject, Teacher}
 
   schema "classes" do
     field :type, :string
@@ -9,14 +9,14 @@ defmodule PlanPicker.Class do
     belongs_to :teacher, PlanPicker.Teacher
     belongs_to :subject, PlanPicker.Subject
 
-    many_to_many(:users, PlanPicker.Accounts.User, join_through: "classes_users")
+    many_to_many :users, PlanPicker.Accounts.User, join_through: "classes_users"
     has_many :points_assignments, PlanPicker.PointsAssigment
     has_many :terms, PlanPicker.Term
 
     timestamps()
   end
 
-  def create_class!(class_attrs, subject, teacher) do
+  def create_class!(class_attrs, %Subject{} = subject, %Teacher{} = teacher) do
     %PlanPicker.Class{}
     |> changeset(class_attrs)
     |> put_assoc(:subject, subject)
