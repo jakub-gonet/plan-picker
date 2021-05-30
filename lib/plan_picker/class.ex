@@ -5,6 +5,7 @@ defmodule PlanPicker.Class do
 
   schema "classes" do
     field :type, :string
+    field :group_number, :integer
     belongs_to :teacher, PlanPicker.Teacher
     belongs_to :subject, PlanPicker.Subject
 
@@ -26,7 +27,7 @@ defmodule PlanPicker.Class do
   @doc false
   def changeset(class, attrs) do
     class
-    |> cast(attrs, [:type])
+    |> cast(attrs, [:type, :group_number])
     |> validate_required([:type])
   end
 end
