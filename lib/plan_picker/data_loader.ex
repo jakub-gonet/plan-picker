@@ -8,18 +8,13 @@ defmodule PlanPicker.DataLoader do
         enrollment = Enrollment.create_enrollment(%{name: "#{semester_n} semestr"})
 
         subjects =
-          data
-          |> Enum.map(& &1.subject)
-          |> Enum.uniq()
-          |> Enum.map(&{&1, Subject.create_subject!(%{name: &1}, enrollment)})
-          |> Map.new()
+          create_and_map_from(
+            data,
+            :subject,
+            &Subject.create_subject!(%{name: &1}, enrollment)
+          )
 
-        teachers =
-          data
-          |> Enum.map(& &1.teacher)
-          |> Enum.uniq()
-          |> Enum.map(&{&1, Teacher.create_teacher!(&1)})
-          |> Map.new()
+        teachers = create_and_map_from(data, :teacher, &Teacher.create_teacher!/1)
 
         rows
         |> Utils.group_by([:subject, :group_number])
@@ -31,6 +26,14 @@ defmodule PlanPicker.DataLoader do
         end)
       end
     end)
+  end
+
+  defp create_and_map_from(data, key, kv_f) do
+    data
+    |> Enum.map(& &1[key])
+    |> Enum.uniq()
+    |> Enum.map(&{&1, kv_f.(&1)})
+    |> Map.new()
   end
 
   defp add_group(terms, subject, teacher) do
