@@ -1,5 +1,5 @@
 defmodule Timestamp.Day do
-  @allowed_days_keys [:monday, :tuesday, :wednesday, :wednesday, :friday]
+  @allowed_days_keys [:monday, :tuesday, :wednesday, :thursday, :friday]
   @allowed_days @allowed_days_keys
                 |> Enum.with_index()
                 |> Map.new()
