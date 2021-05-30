@@ -4,6 +4,7 @@ defmodule PlanPicker.Term do
   alias PlanPicker.Repo
 
   schema "terms" do
+    field :raw_interval, :map, virtual: true
     field :interval, Timestamp.Range
     field :location, :string
     field :week_type, :string
@@ -25,14 +26,14 @@ defmodule PlanPicker.Term do
     |> cast(attrs, [
       :location,
       :week_type,
-      :interval
+      :raw_interval
     ])
     |> set_interval()
     |> validate_required([:interval, :location])
   end
 
   defp set_interval(changeset) do
-    %{start: start_t, end: end_t, weekday: weekday} = get_field(changeset, :interval)
+    %{start: start_t, end: end_t, weekday: weekday} = get_field(changeset, :raw_interval)
 
     if start_t && end_t && weekday do
       put_change(changeset, :interval, Timestamp.Range.from_time(start_t, end_t, weekday))

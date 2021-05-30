@@ -61,7 +61,7 @@ defmodule PlanPicker.DataLoader do
        ) do
     Term.create_term!(
       %{
-        interval: %{start: start_t, end: end_t, weekday: weekday},
+        raw_interval: %{start: start_t, end: end_t, weekday: weekday},
         location: loc,
         week_type: transform_week_type(week_type)
       },
