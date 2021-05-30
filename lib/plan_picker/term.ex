@@ -34,7 +34,7 @@ defmodule PlanPicker.Term do
       :interval_weekday
     ])
     |> set_interval()
-    |> validate_required([:interval, :location, :week_type])
+    |> validate_required([:interval, :location])
   end
 
   defp set_interval(changeset) do
