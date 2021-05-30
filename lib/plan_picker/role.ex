@@ -14,9 +14,11 @@ defmodule PlanPicker.Role do
   Checks whether the user has a role with name: role_name.
   """
   def has_role?(user, role_name) do
-    query = from u in PlanPicker.Accounts.User,
-      join: r in assoc(u, :role),
-      where: r.name == ^role_name and u.id == ^user.id
+    query =
+      from u in PlanPicker.Accounts.User,
+        join: r in assoc(u, :role),
+        where: r.name == ^role_name and u.id == ^user.id
+
     PlanPicker.Repo.exists?(query)
   end
 
@@ -41,9 +43,11 @@ defmodule PlanPicker.Role do
   Does nothing if user doesn't have role role_name.
   """
   def unassign_role(user, role_name) do
-    query = from u in PlanPicker.Accounts.User,
-      join: r in assoc(u, :role),
-      where: r.name == ^role_name and u.id == ^user.id
+    query =
+      from u in PlanPicker.Accounts.User,
+        join: r in assoc(u, :role),
+        where: r.name == ^role_name and u.id == ^user.id
+
     PlanPicker.Repo.delete_all(query)
   end
 

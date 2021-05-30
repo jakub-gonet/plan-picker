@@ -1,6 +1,7 @@
 defmodule PlanPicker.Subject do
   use PlanPicker.Schema
   import Ecto.Changeset
+  alias PlanPicker.Repo
 
   schema "subjects" do
     field :name, :string
@@ -14,9 +15,9 @@ defmodule PlanPicker.Subject do
   def create_subject(subject_params, enrollment) do
     %PlanPicker.Subject{}
     |> changeset(subject_params)
-    |> Ecto.Changeset.put_assoc(:classes, [])
-    |> Ecto.Changeset.put_assoc(:enrollment, enrollment)
-    |> PlanPicker.Repo.insert!()
+    |> put_assoc(:classes, [])
+    |> put_assoc(:enrollment, enrollment)
+    |> Repo.insert!()
   end
 
   @doc false

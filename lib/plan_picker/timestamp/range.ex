@@ -93,12 +93,10 @@ defimpl Inspect, for: Timestamp.Range do
 end
 
 defimpl Phoenix.HTML.Safe, for: Timestamp.Range do
-  def to_iodata(
-    %Timestamp.Range{
-      start: range_start,
-      end: range_end,
-    }
-  ) do
+  def to_iodata(%Timestamp.Range{
+        start: range_start,
+        end: range_end
+      }) do
     "#{Phoenix.HTML.Safe.to_iodata(range_start)} - #{Phoenix.HTML.Safe.to_iodata(range_end)}"
   end
 end
