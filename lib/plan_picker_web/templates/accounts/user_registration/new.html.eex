@@ -7,32 +7,52 @@
     </div>
   <% end %>
 
-  <%= label f, :name %>
-  <%= text_input f, :name, required: true %>
-  <%= error_tag f, :name %>
+  <div class="field">
+    <%= label f, :name, class: "label" %>
+    <div class="control">
+      <%= text_input f, :name, required: true, class: "input" %>
+      <%= error_tag f, :name %>
+    </div>
+  </div>
 
-  <%= label f, :last_name %>
-  <%= text_input f, :last_name, required: true %>
-  <%= error_tag f, :last_name %>
+  <div class="field">
+    <%= label f, :last_name %>
+    <div class="control">
+      <%= text_input f, :last_name, required: true, class: "input" %>
+      <%= error_tag f, :last_name %>
+    </div>
+  </div>
 
-  <%= label f, :index_no %>
-  <%= text_input f, :index_no, required: true, pattern: "[0-9]+" %>
-  <%= error_tag f, :index_no %>
+  <div class="field">
+    <%= label f, :index_no %>
+    <div class="control">
+      <%= text_input f, :index_no, required: true, pattern: "[0-9]+", class: "input" %>
+      <%= error_tag f, :index_no %>
+    </div>
+  </div>
 
-  <%= label f, :email %>
-  <%= email_input f, :email, required: true %>
-  <%= error_tag f, :email %>
+  <div class="field">
+    <%= label f, :email %>
+    <div class="control">
+      <%= email_input f, :email, required: true, class: "input" %>
+      <%= error_tag f, :email %>
+    </div>
+  </div>
 
-  <%= label f, :password %>
-  <%= password_input f, :password, required: true %>
-  <%= error_tag f, :password %>
+  <div class="field">
+    <%= label f, :password %>
+    <div class="control">
+      <%= password_input f, :password, required: true, class: "input" %>
+      <%= error_tag f, :password %>
+    </div>
+  </div>
 
   <div>
-    <%= submit "Register" %>
+    <%= submit "Register", class: "button is-primary" %>
   </div>
 <% end %>
 
-<p>
+<p class="mt-2 is-size-6">
   <%= link "Log in", to: Routes.user_session_path(@conn, :new) %> |
   <%= link "Forgot your password?", to: Routes.user_reset_password_path(@conn, :new) %>
 </p>
