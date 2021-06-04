@@ -48,7 +48,7 @@
   </div>
 
   <div>
-    <%= submit "Register", class: "button is-primary" %>
+    <%= submit "Register", class: "button is-link" %>
   </div>
 <% end %>
 

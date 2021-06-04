@@ -7,20 +7,28 @@
     </div>
   <% end %>
 
-  <%= label f, :password, "New password" %>
-  <%= password_input f, :password, required: true %>
-  <%= error_tag f, :password %>
+  <div class="field">
+    <%= label f, :password, "New password", class: "label" %>
+    <div class="control">
+      <%= password_input f, :password, required: true, class: "input" %>
+      <%= error_tag f, :password %>
+    </div>
+  </div>
 
-  <%= label f, :password_confirmation, "Confirm new password" %>
-  <%= password_input f, :password_confirmation, required: true %>
-  <%= error_tag f, :password_confirmation %>
+  <div class="field">
+    <%= label f, :password_confirmation, "Confirm new password", class: "label" %>
+    <div class="control">
+      <%= password_input f, :password_confirmation, required: true, class: "input" %>
+      <%= error_tag f, :password_confirmation %>
+    </div>
+  </div>
 
   <div>
-    <%= submit "Reset password" %>
+    <%= submit "Reset password", class: "button is-link" %>
   </div>
 <% end %>
 
-<p>
+<p class="mt-2 is-size-6">
   <%= link "Register", to: Routes.user_registration_path(@conn, :new) %> |
   <%= link "Log in", to: Routes.user_session_path(@conn, :new) %>
 </p>
