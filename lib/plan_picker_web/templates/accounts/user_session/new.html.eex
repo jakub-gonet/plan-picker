@@ -27,7 +27,7 @@
     </div>
 
     <div>
-      <%= submit "Log in", class: "button is-primary" %>
+      <%= submit "Log in", class: "button is-link" %>
     </div>
   <% end %>
 
