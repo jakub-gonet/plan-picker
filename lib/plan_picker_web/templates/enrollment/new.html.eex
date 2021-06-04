@@ -1,15 +1,21 @@
-<h1>Create an enrollment</h1>
+<div class="column is-one-quarter">
+    <h1>Create an enrollment</h1>
 
-<%= form_for @changeset, Routes.enrollment_path(@conn, :create), fn f -> %>
-    <%= if @changeset.action do %>
-        <div class="alert alert-danger">
-            <p>Oops, something went wrong! Please check the errors below.</p>
+    <%= form_for @changeset, Routes.enrollment_path(@conn, :create), fn f -> %>
+        <%= if @changeset.action do %>
+            <div class="alert alert-danger">
+                <p>Oops, something went wrong! Please check the errors below.</p>
+            </div>
+        <% end %>
+
+        <div class="field">
+            <%= label f, :name, "Enrollment name", class: "label" %>
+            <div class="control">
+                <%= text_input f, :name, required: true, class: "input" %>
+                <%= error_tag f, :name %>
+            </div>
         </div>
+
+        <%= submit "Create enrollment", class: "button is-link" %>
     <% end %>
-
-    <%= label f, :name, "Enrollment name" %>
-    <%= text_input f, :name, required: true %>
-    <%= error_tag f, :name %>
-
-    <%= submit "Create enrollment" %>
-<% end %>
+</div>
