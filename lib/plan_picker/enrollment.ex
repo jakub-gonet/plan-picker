@@ -2,6 +2,7 @@ defmodule PlanPicker.Enrollment do
   use PlanPicker.Schema
   import Ecto.Changeset
   import Ecto.Query, only: [from: 2]
+  alias PlanPicker.{Enrollment, Repo}
 
   schema "enrollments" do
     field :name, :string
@@ -23,7 +24,7 @@ defmodule PlanPicker.Enrollment do
         where: u.id == ^user.id,
         select: e
 
-    PlanPicker.Repo.all(query)
+    Repo.all(query)
   end
 
   @doc """
@@ -32,44 +33,44 @@ defmodule PlanPicker.Enrollment do
   def assign_user_to_enrollment(enrollment, user) do
     # fetch enrollment with associations
     enrollment =
-      PlanPicker.Enrollment
-      |> PlanPicker.Repo.get!(enrollment.id)
-      |> PlanPicker.Repo.preload(:users)
+      Enrollment
+      |> Repo.get!(enrollment.id)
+      |> Repo.preload(:users)
 
     enrollment
-    |> Ecto.Changeset.change()
-    |> Ecto.Changeset.put_assoc(:users, [user | enrollment.users])
-    |> PlanPicker.Repo.update!()
+    |> change()
+    |> put_assoc(:users, [user | enrollment.users])
+    |> Repo.update!()
   end
 
   def create_enrollment(enrollment_params) do
     %PlanPicker.Enrollment{state: :closed}
-    |> Ecto.Changeset.change()
-    |> PlanPicker.Enrollment.changeset(enrollment_params)
-    |> PlanPicker.Repo.insert!()
+    |> change()
+    |> Enrollment.changeset(enrollment_params)
+    |> Repo.insert!()
   end
 
   def get_enrollment!(enrollment_id, opts \\ %{preload: [:users, :subjects]}) do
-    PlanPicker.Enrollment
-    |> PlanPicker.Repo.get!(enrollment_id)
-    |> PlanPicker.Repo.preload(opts.preload)
+    Enrollment
+    |> Repo.get!(enrollment_id)
+    |> Repo.preload(opts.preload)
   end
 
   def get_all_enrollments do
-    PlanPicker.Repo.all(PlanPicker.Enrollment)
+    Repo.all(PlanPicker.Enrollment)
   end
 
   def update_enrollment(enrollment_id, enrollment_params) do
     PlanPicker.Enrollment
-    |> PlanPicker.Repo.get!(enrollment_id)
-    |> PlanPicker.Enrollment.changeset(enrollment_params)
-    |> PlanPicker.Repo.update!()
+    |> Repo.get!(enrollment_id)
+    |> Enrollment.changeset(enrollment_params)
+    |> Repo.update!()
   end
 
   def delete_enrollment(enrollment_id) do
-    PlanPicker.Enrollment
-    |> PlanPicker.Repo.get!(enrollment_id)
-    |> PlanPicker.Repo.delete!()
+    Enrollment
+    |> Repo.get!(enrollment_id)
+    |> Repo.delete!()
   end
 
   @doc false
