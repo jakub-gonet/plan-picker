@@ -1,6 +1,6 @@
 <section>
   <nav class="navbar" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
+    <div class="navbar-brand mx-6">
       <%= link to: Routes.page_path(@conn, :index), class: "navbar-item" do %>
         <img src="<%= Routes.static_path(@conn, "/favicon.svg") %>" class="logo">
       <% end %>
