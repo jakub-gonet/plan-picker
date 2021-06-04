@@ -1,58 +1,60 @@
-<h1>Register</h1>
+<div class="column is-one-quarter">
+  <h1>Register</h1>
 
-<%= form_for @changeset, Routes.user_registration_path(@conn, :create), fn f -> %>
-  <%= if @changeset.action do %>
-    <div class="alert alert-danger">
-      <p>Oops, something went wrong! Please check the errors below.</p>
+  <%= form_for @changeset, Routes.user_registration_path(@conn, :create), fn f -> %>
+    <%= if @changeset.action do %>
+      <div class="alert alert-danger">
+        <p>Oops, something went wrong! Please check the errors below.</p>
+      </div>
+    <% end %>
+
+    <div class="field">
+      <%= label f, :name, class: "label" %>
+      <div class="control">
+        <%= text_input f, :name, required: true, class: "input" %>
+        <%= error_tag f, :name %>
+      </div>
+    </div>
+
+    <div class="field">
+      <%= label f, :last_name %>
+      <div class="control">
+        <%= text_input f, :last_name, required: true, class: "input" %>
+        <%= error_tag f, :last_name %>
+      </div>
+    </div>
+
+    <div class="field">
+      <%= label f, :index_no %>
+      <div class="control">
+        <%= text_input f, :index_no, required: true, pattern: "[0-9]+", class: "input" %>
+        <%= error_tag f, :index_no %>
+      </div>
+    </div>
+
+    <div class="field">
+      <%= label f, :email %>
+      <div class="control">
+        <%= email_input f, :email, required: true, class: "input" %>
+        <%= error_tag f, :email %>
+      </div>
+    </div>
+
+    <div class="field">
+      <%= label f, :password %>
+      <div class="control">
+        <%= password_input f, :password, required: true, class: "input" %>
+        <%= error_tag f, :password %>
+      </div>
+    </div>
+
+    <div>
+      <%= submit "Register", class: "button is-link" %>
     </div>
   <% end %>
 
-  <div class="field">
-    <%= label f, :name, class: "label" %>
-    <div class="control">
-      <%= text_input f, :name, required: true, class: "input" %>
-      <%= error_tag f, :name %>
-    </div>
-  </div>
-
-  <div class="field">
-    <%= label f, :last_name %>
-    <div class="control">
-      <%= text_input f, :last_name, required: true, class: "input" %>
-      <%= error_tag f, :last_name %>
-    </div>
-  </div>
-
-  <div class="field">
-    <%= label f, :index_no %>
-    <div class="control">
-      <%= text_input f, :index_no, required: true, pattern: "[0-9]+", class: "input" %>
-      <%= error_tag f, :index_no %>
-    </div>
-  </div>
-
-  <div class="field">
-    <%= label f, :email %>
-    <div class="control">
-      <%= email_input f, :email, required: true, class: "input" %>
-      <%= error_tag f, :email %>
-    </div>
-  </div>
-
-  <div class="field">
-    <%= label f, :password %>
-    <div class="control">
-      <%= password_input f, :password, required: true, class: "input" %>
-      <%= error_tag f, :password %>
-    </div>
-  </div>
-
-  <div>
-    <%= submit "Register", class: "button is-link" %>
-  </div>
-<% end %>
-
-<p class="mt-2 is-size-6">
-  <%= link "Log in", to: Routes.user_session_path(@conn, :new) %> |
-  <%= link "Forgot your password?", to: Routes.user_reset_password_path(@conn, :new) %>
-</p>
+  <p class="mt-2 is-size-6">
+    <%= link "Log in", to: Routes.user_session_path(@conn, :new) %> |
+    <%= link "Forgot your password?", to: Routes.user_reset_password_path(@conn, :new) %>
+  </p>
+</div>
