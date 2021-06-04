@@ -1,15 +1,36 @@
 <section>
-  <nav role="navigation" class="row">
-    <div class="column column-10 ">
-      <%= link to: Routes.page_path(@conn, :index) do %>
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <%= link to: Routes.page_path(@conn, :index), class: "navbar-item" do %>
         <img src="<%= Routes.static_path(@conn, "/favicon.svg") %>" class="logo">
       <% end %>
+
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
     </div>
-    <div class="column">
-      <h1>Plan picker</h1>
-    </div>
-    <div class="column column-offset-60">
-      <%= render "_user_menu.html", assigns %>
+
+    <div class="navbar-end">
+      <div class="navbar-item is-flex-direction-column">
+<%= if @current_user do %>
+        <div class="column">
+          <span class="tag is-primary">Moderator</span>
+          <span class="tag is-primary">Admin</span>
+          <span class="is-size-6"><%= @current_user.email %></span>
+          </div>
+        <div class="buttons">
+          <%= link "Settings", to: Routes.user_settings_path(@conn, :edit), class: "button is-light" %>
+          <%= link "Log out", to: Routes.user_session_path(@conn, :delete), method: :delete, class: "button is-light" %>
+        </div>
+<% else %>
+        <div class="buttons">
+          <%= link to: Routes.user_registration_path(@conn, :new), class: "button is-primary" do %><strong>Register</strong><% end %>
+          <%= link "Log in", to: Routes.user_session_path(@conn, :new), class: "button is-light" %>
+        </div>
+<% end %>
+      </div>
     </div>
   </nav>
 </section>
