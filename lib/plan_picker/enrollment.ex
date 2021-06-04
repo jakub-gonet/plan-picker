@@ -27,6 +27,10 @@ defmodule PlanPicker.Enrollment do
     Repo.all(query)
   end
 
+  def get_enrollment_by_name(name) do
+    Repo.get_by(Enrollment, name: name)
+  end
+
   @doc """
     Creates an association for Enrollment.users between enrollment and user.
   """

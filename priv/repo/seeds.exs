@@ -9,9 +9,10 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+alias PlanPicker.{Repo, Role, Accounts, DataLoader, Enrollment}
 
 admin =
-  PlanPicker.Repo.insert!(%PlanPicker.Accounts.User{
+  Repo.insert!(%PlanPicker.Accounts.User{
     email: "admin@test.com",
     hashed_password: Bcrypt.hash_pwd_salt("admin"),
     name: "admin",
@@ -19,11 +20,11 @@ admin =
     index_no: "000000"
   })
 
-PlanPicker.Role.assign_role(admin, :moderator)
-PlanPicker.Role.assign_role(admin, :admin)
+Role.assign_role(admin, :moderator)
+Role.assign_role(admin, :admin)
 
 moderator =
-  PlanPicker.Repo.insert!(%PlanPicker.Accounts.User{
+  Repo.insert!(%Accounts.User{
     email: "moderator@test.com",
     hashed_password: Bcrypt.hash_pwd_salt("moderator"),
     name: "moderator",
@@ -31,16 +32,20 @@ moderator =
     index_no: "000001"
   })
 
-PlanPicker.Role.assign_role(moderator, :moderator)
+Role.assign_role(moderator, :moderator)
 
-PlanPicker.Repo.insert!(%PlanPicker.Accounts.User{
-  email: "user@test.com",
-  hashed_password: Bcrypt.hash_pwd_salt("user"),
-  name: "user",
-  last_name: "user",
-  index_no: "000002"
-})
+user =
+  Repo.insert!(%Accounts.User{
+    email: "user@test.com",
+    hashed_password: Bcrypt.hash_pwd_salt("user"),
+    name: "user",
+    last_name: "user",
+    index_no: "000002"
+  })
 
 "priv/repo/seeds/example_plan_data.csv"
-|> PlanPicker.DataLoader.import()
-|> PlanPicker.DataLoader.load_imported_data_to_db()
+|> DataLoader.import()
+|> DataLoader.load_imported_data_to_db()
+
+enrollment = Enrollment.get_enrollment_by_name("3 semestr")
+Enrollment.assign_user_to_enrollment(enrollment, user)
