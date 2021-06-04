@@ -33,6 +33,14 @@ moderator =
 
 PlanPicker.Role.assign_role(moderator, :moderator)
 
+PlanPicker.Repo.insert!(%PlanPicker.Accounts.User{
+  email: "user@test.com",
+  hashed_password: Bcrypt.hash_pwd_salt("user"),
+  name: "user",
+  last_name: "user",
+  index_no: "000002"
+})
+
 "priv/repo/seeds/example_plan_data.csv"
 |> PlanPicker.DataLoader.import()
 |> PlanPicker.DataLoader.load_imported_data_to_db()
