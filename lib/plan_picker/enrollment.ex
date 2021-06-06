@@ -49,6 +49,16 @@ defmodule PlanPicker.Enrollment do
     |> PlanPicker.Repo.insert!()
   end
 
+  def get_enrollment(enrollment_id, opts \\ %{preload: [:users, :subjects]}) do
+    PlanPicker.Enrollment
+    |> PlanPicker.Repo.get!(enrollment_id)
+    |> PlanPicker.Repo.preload(opts.preload)
+  end
+
+  def get_all_enrollments do
+    PlanPicker.Repo.all(PlanPicker.Enrollment)
+  end
+
   def update_enrollment(enrollment_id, enrollment_params) do
     PlanPicker.Enrollment
     |> PlanPicker.Repo.get!(enrollment_id)
