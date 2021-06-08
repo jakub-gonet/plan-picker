@@ -8,28 +8,27 @@ defmodule PlanPickerWeb.EnrollmentController do
   end
 
   def index(conn, _params) do
-    enrollments = PlanPicker.Repo.all(PlanPicker.Enrollment)
+    enrollments = PlanPicker.Enrollment.get_all_enrollments()
 
     render(conn, "index.html", enrollments: enrollments)
   end
 
   def new(conn, _params) do
     changeset = Ecto.Changeset.change(%PlanPicker.Enrollment{})
+
     render(conn, "new.html", changeset: changeset)
   end
 
   def create(conn, %{"enrollment" => enrollment_params}) do
     enrollment = PlanPicker.Enrollment.create_enrollment(enrollment_params)
 
-    redirect(conn, to: Routes.enrollment_path(conn, :show, enrollment.id))
+    conn
+    |> put_flash(:info, "Enrollment created.")
+    |> redirect(to: Routes.enrollment_path(conn, :show, enrollment.id))
   end
 
   def show(conn, %{"id" => enrollment_id}) do
-    enrollment =
-      PlanPicker.Enrollment
-      |> PlanPicker.Repo.get!(enrollment_id)
-      |> PlanPicker.Repo.preload(:users)
-      |> PlanPicker.Repo.preload(:subjects)
+    enrollment = PlanPicker.Enrollment.get_enrollment(enrollment_id)
 
     render(conn, "show.html", enrollment: enrollment)
   end
@@ -44,10 +43,7 @@ defmodule PlanPickerWeb.EnrollmentController do
 
   def edit(conn, %{"id" => enrollment_id}) do
     changeset =
-      PlanPicker.Enrollment
-      |> PlanPicker.Repo.get!(enrollment_id)
-      |> PlanPicker.Repo.preload(:users)
-      |> PlanPicker.Repo.preload(:subjects)
+      PlanPicker.Enrollment.get_enrollment(enrollment_id)
       |> Ecto.Changeset.change()
       |> Ecto.Changeset.cast(%{}, [:id])
 
