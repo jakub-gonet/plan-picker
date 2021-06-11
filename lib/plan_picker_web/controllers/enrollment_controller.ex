@@ -28,7 +28,7 @@ defmodule PlanPickerWeb.EnrollmentController do
   end
 
   def show(conn, %{"id" => enrollment_id}) do
-    enrollment = PlanPicker.Enrollment.get_enrollment(enrollment_id)
+    enrollment = PlanPicker.Enrollment.get_enrollment!(enrollment_id)
 
     render(conn, "show.html", enrollment: enrollment)
   end
@@ -43,7 +43,7 @@ defmodule PlanPickerWeb.EnrollmentController do
 
   def edit(conn, %{"id" => enrollment_id}) do
     changeset =
-      PlanPicker.Enrollment.get_enrollment(enrollment_id)
+      PlanPicker.Enrollment.get_enrollment!(enrollment_id)
       |> Ecto.Changeset.change()
       |> Ecto.Changeset.cast(%{}, [:id])
 
