@@ -9,7 +9,7 @@ defmodule PlanPicker.Class do
     belongs_to :teacher, PlanPicker.Teacher
     belongs_to :subject, PlanPicker.Subject
 
-    many_to_many :users, PlanPicker.Accounts.User, join_through: "classes_users"
+    many_to_many :users, PlanPicker.Accounts.User, join_through: PlanPicker.ClassUser, on_replace: :delete
     has_many :points_assignments, PlanPicker.PointsAssigment
     has_many :terms, PlanPicker.Term
 
@@ -28,6 +28,26 @@ defmodule PlanPicker.Class do
     PlanPicker.Class
     |> Repo.get!(class_id)
     |> Repo.preload(opts[:preload])
+  end
+
+  def assign_users_to_class!(class, users) do
+    class = Repo.preload(class, :users)
+
+    users = Enum.filter(users, &(!Enum.member?(class.users, &1)))
+
+    class
+    |> change()
+    |> put_assoc(:users, users ++ class.users)
+    |> Repo.update!()
+  end
+
+  def remove_user_from_class!(class, user) do
+    class = Repo.preload(class, :users)
+
+    class
+    |> change()
+    |> put_assoc(:users, List.delete(class.users, user))
+    |> Repo.update!()
   end
 
   @doc false

@@ -15,7 +15,7 @@ defmodule PlanPicker.Accounts.User do
 
     has_many :role, PlanPicker.Role
     has_many :points_assignments, PlanPicker.PointsAssigment
-    many_to_many(:classes, PlanPicker.Class, join_through: "classes_users")
+    many_to_many(:classes, PlanPicker.Class, join_through: PlanPicker.ClassUser, on_replace: :delete)
 
     timestamps()
   end
