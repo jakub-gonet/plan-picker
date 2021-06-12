@@ -16,8 +16,12 @@
       <div class="navbar-item is-flex-direction-column">
 <%= if @current_user do %>
         <div class="column">
+  <%= if @is_moderator do %>
           <span class="tag is-primary">Moderator</span>
+  <% end %>
+  <%= if @is_admin do %>
           <span class="tag is-primary">Admin</span>
+  <% end %>
           <span class="is-size-6"><%= @current_user.email %></span>
           </div>
         <div class="buttons">
