@@ -17,7 +17,7 @@
 <%= if authenticated?(@conn) do %>
   <%= render "_navbar_logged_in.html", assigns %>
 <% else %>
-  <%= render "_navbar_logged_out.html" %>
+  <%= render "_navbar_logged_out.html", assigns %>
 <% end %>
       </div>
     </div>
