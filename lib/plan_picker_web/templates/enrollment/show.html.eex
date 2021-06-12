@@ -12,3 +12,5 @@
     <% end %>
 </ol>
 <%= link "Edit enrollment", to: Routes.enrollment_path(@conn, :edit, @enrollment.id) %>
+<br>
+<%= link "Assign users to groups", to: Routes.class_path(@conn, :index, @enrollment.id) %>
