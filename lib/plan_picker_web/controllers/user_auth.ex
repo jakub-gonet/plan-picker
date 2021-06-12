@@ -2,7 +2,7 @@ defmodule PlanPickerWeb.UserAuth do
   import Plug.Conn
   import Phoenix.Controller
 
-  alias PlanPicker.Accounts
+  alias PlanPicker.{Accounts, Role}
   alias PlanPickerWeb.Router.Helpers, as: Routes
 
   # Make the remember me cookie valid for 60 days.
@@ -160,6 +160,13 @@ defmodule PlanPickerWeb.UserAuth do
       |> put_flash(:error, "You do not have required permissions to view this page.")
       |> redirect(to: Routes.user_session_path(conn, :new))
       |> halt()
+    end
+  end
+
+  def put_roles_if_authenticated(conn, _opts) do
+    case current_user(conn) do
+      nil -> conn
+      user -> assign(conn, :roles, Role.get_roles_for(user))
     end
   end
 

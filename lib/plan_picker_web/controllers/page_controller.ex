@@ -8,11 +8,7 @@ defmodule PlanPickerWeb.PageController do
         render(conn, "anonymous_index.html")
 
       user ->
-        render(conn, "index.html",
-          is_moderator: Role.has_role?(user, :moderator),
-          is_admin: Role.has_role?(user, :admin),
-          current_user: user
-        )
+        render(conn, "index.html", current_user: user)
     end
   end
 end

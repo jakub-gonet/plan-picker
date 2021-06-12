@@ -14,25 +14,10 @@
 
     <div class="navbar-end">
       <div class="navbar-item is-flex-direction-column">
-<%= if @current_user do %>
-        <div class="column">
-  <%= if @is_moderator do %>
-          <span class="tag is-primary">Moderator</span>
-  <% end %>
-  <%= if @is_admin do %>
-          <span class="tag is-primary">Admin</span>
-  <% end %>
-          <span class="is-size-6"><%= @current_user.email %></span>
-          </div>
-        <div class="buttons">
-          <%= link "Settings", to: Routes.user_settings_path(@conn, :edit), class: "button is-light" %>
-          <%= link "Log out", to: Routes.user_session_path(@conn, :delete), method: :delete, class: "button is-light" %>
-        </div>
+<%= if authenticated?(@conn) do %>
+  <%= render "_navbar_logged_in.html", assigns %>
 <% else %>
-        <div class="buttons">
-          <%= link to: Routes.user_registration_path(@conn, :new), class: "button is-primary" do %><strong>Register</strong><% end %>
-          <%= link "Log in", to: Routes.user_session_path(@conn, :new), class: "button is-light" %>
-        </div>
+  <%= render "_navbar_logged_out.html" %>
 <% end %>
       </div>
     </div>

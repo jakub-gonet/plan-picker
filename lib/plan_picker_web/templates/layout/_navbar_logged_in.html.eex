@@ -1,0 +1,14 @@
+ <div class="column">
+  <div class="column">
+    <span class="is-size-6"><%= current_user(@conn).email %></span>
+<%= if :moderator in @roles do %>
+    <span class="tag is-primary">Moderator</span>
+<% end %>
+<%= if :admin in @roles do %>
+    <span class="tag is-primary">Admin</span>
+<% end %>
+  </div>
+  <div class="buttons">
+    <%= link "Settings", to: Routes.user_settings_path(@conn, :edit), class: "button is-light" %>
+    <%= link "Log out", to: Routes.user_session_path(@conn, :delete), method: :delete, class: "button is-light" %>
+</div>

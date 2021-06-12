@@ -13,7 +13,10 @@ defmodule PlanPicker.Role do
   end
 
   def get_roles_for(user) do
-    Repo.preload(user, :role)
+    user
+    |> Ecto.assoc(:role)
+    |> Repo.all()
+    |> Enum.map(& &1.name)
   end
 
   @doc """

@@ -3,10 +3,10 @@
 <%= render_assigned_enrollments(@conn, @current_user) %>
 
 <ul>
-<%= if @is_moderator do %>
-<li><%= link "Manage enrollments", to: Routes.enrollment_management_path(@conn, :index) %></li>
+<%= if :moderator in @roles do %>
+  <li><%= link "Manage enrollments", to: Routes.enrollment_management_path(@conn, :index) %></li>
 <% end %>
-<%= if @is_admin do %>
-<li><%= link "Manage accounts", to: Routes.user_path(@conn, :index) %></li>
+<%= if :admin in @roles do %>
+  <li><%= link "Manage accounts", to: Routes.user_path(@conn, :index) %></li>
 <% end %>
 </ul>
