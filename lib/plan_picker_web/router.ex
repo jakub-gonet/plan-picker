@@ -12,20 +12,11 @@ defmodule PlanPickerWeb.Router do
     plug :fetch_current_user
   end
 
-  pipeline :api do
-    plug :accepts, ["json"]
-  end
-
   scope "/", PlanPickerWeb do
     pipe_through :browser
 
     get "/", PageController, :index
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", PlanPickerWeb do
-  #   pipe_through :api
-  # end
 
   # Enables LiveDashboard only for development
   #
