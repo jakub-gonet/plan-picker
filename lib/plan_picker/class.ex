@@ -9,7 +9,10 @@ defmodule PlanPicker.Class do
     belongs_to :teacher, PlanPicker.Teacher
     belongs_to :subject, PlanPicker.Subject
 
-    many_to_many :users, PlanPicker.Accounts.User, join_through: PlanPicker.ClassUser, on_replace: :delete
+    many_to_many :users, PlanPicker.Accounts.User,
+      join_through: PlanPicker.ClassUser,
+      on_replace: :delete
+
     has_many :points_assignments, PlanPicker.PointsAssigment
     has_many :terms, PlanPicker.Term
 
