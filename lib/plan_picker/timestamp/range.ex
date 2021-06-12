@@ -31,7 +31,7 @@ defmodule Timestamp.Range do
 
   def from_time(start_time, end_time, weekday, opts \\ []) do
     offset = Timestamp.Day.get_offset(weekday)
-    date = Date.new!(@year, @month, @day + offset)
+    date = Date.new!(@year, @month, offset)
 
     interval_start = DateTime.new!(date, start_time)
     interval_end = DateTime.new!(date, end_time)

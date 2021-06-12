@@ -1,0 +1,10 @@
+<ul>
+<%= for term <- @terms do %>
+  <%= term.name %>
+  <%= term.type %>
+  <%= term.group_number %>
+  <%= term.week_type %>
+  <%= term.teacher.name %> <%= term.teacher.surname %>
+  <%= term.location %>
+<% end %>
+</ul>
