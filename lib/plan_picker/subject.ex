@@ -21,14 +21,9 @@ defmodule PlanPicker.Subject do
     |> Repo.insert!()
   end
 
-  def get_subject_in_enrollment!(enrollment, subject_id, opts \\ [preload: [classes: [:terms, :teacher, :users]]]) do
-    query = from e in PlanPicker.Enrollment,
-      join: s in assoc(e, :subjects),
-      where: e.id == ^enrollment.id and s.id == ^subject_id,
-      select: s
-
-    query
-    |> Repo.one!()
+  def get_subject!(subject_id, opts \\ [preload: [classes: [:terms, :teacher, :users]]]) do
+    PlanPicker.Subject
+    |> Repo.get!(subject_id)
     |> Repo.preload(opts[:preload])
   end
 
