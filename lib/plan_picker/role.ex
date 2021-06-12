@@ -12,6 +12,10 @@ defmodule PlanPicker.Role do
     timestamps()
   end
 
+  def get_roles_for(user) do
+    Repo.preload(user, :role)
+  end
+
   @doc """
   Checks whether the user has a role with name: role_name.
   """
