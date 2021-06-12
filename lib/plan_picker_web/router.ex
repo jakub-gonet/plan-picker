@@ -12,6 +12,16 @@ defmodule PlanPickerWeb.Router do
     plug :fetch_current_user
   end
 
+  pipeline :is_moderator do
+    plug :require_authenticated_user
+    plug :require_role, :moderator
+  end
+
+  pipeline :is_admin do
+    plug :require_authenticated_user
+    plug :require_role, :admin
+  end
+
   scope "/", PlanPickerWeb do
     pipe_through :browser
 
@@ -68,7 +78,7 @@ defmodule PlanPickerWeb.Router do
 
   # moderator or admin routes
   scope "/manage/", PlanPickerWeb do
-    pipe_through [:browser, :require_authenticated_user, :require_moderator_role]
+    pipe_through [:browser, :is_moderator]
 
     get "/enrollments/", EnrollmentController, :index
     get "/enrollments/:id/show/", EnrollmentController, :show
@@ -78,7 +88,7 @@ defmodule PlanPickerWeb.Router do
 
   # admin only routes
   scope "/manage/", PlanPickerWeb do
-    pipe_through [:browser, :require_authenticated_user, :require_admin_role]
+    pipe_through [:browser, :is_admin]
 
     get "/enrollments/new", EnrollmentController, :new
     post "/enrollments/", EnrollmentController, :create

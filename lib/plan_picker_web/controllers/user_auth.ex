@@ -144,19 +144,8 @@ defmodule PlanPickerWeb.UserAuth do
 
   Requires a user to be authenticated (connection must be piped through :require_authenticated_user first)
   """
-  def require_moderator_role(conn, _opts) do
-    if PlanPicker.Role.has_role?(conn.assigns[:current_user], :moderator) do
-      conn
-    else
-      conn
-      |> put_flash(:error, "You do not have required permissions to view this page.")
-      |> redirect(to: Routes.user_session_path(conn, :new))
-      |> halt()
-    end
-  end
-
-  def require_admin_role(conn, _opts) do
-    if PlanPicker.Role.has_role?(conn.assigns[:current_user], :admin) do
+  def require_role(conn, role) do
+    if PlanPicker.Role.has_role?(conn.assigns[:current_user], role) do
       conn
     else
       conn
