@@ -8,7 +8,7 @@ defmodule PlanPickerWeb.ClassManagementController do
       }) do
     enrollment = PlanPicker.Enrollment.get_enrollment!(enrollment_id)
 
-    selected_subject = PlanPicker.Subject.get_subject_in_enrollment!(enrollment, subject_id)
+    selected_subject = PlanPicker.Subject.get_subject!(subject_id)
 
     selected_class = PlanPicker.Class.get_class!(class_id)
 
@@ -22,7 +22,7 @@ defmodule PlanPickerWeb.ClassManagementController do
   def index(conn, %{"enrollment_id" => enrollment_id, "subject_id" => subject_id}) do
     enrollment = PlanPicker.Enrollment.get_enrollment!(enrollment_id)
 
-    selected = PlanPicker.Subject.get_subject_in_enrollment!(enrollment, subject_id)
+    selected = PlanPicker.Subject.get_subject!(subject_id)
 
     render(conn, "index.html",
       enrollment: enrollment,
