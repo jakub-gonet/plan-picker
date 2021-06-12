@@ -1,14 +1,1 @@
-<h1><%= @enrollment.name %></h1>
-<h2>State: <%= @enrollment.state %></h2>
-
-<h2>Assigned users</h2>
-<ol>
-    <%= if length(@enrollment.users) > 0 do %>
-        <%= for user <- @enrollment.users do %>
-            <li> <%= user.index_no %>, <%= user.name %> <%= user.last_name %> </li>
-        <% end %>
-    <% else %>
-        There are no users assigned to this enrollment.
-    <% end %>
-</ol>
-<%= link "Edit enrollment", to: Routes.enrollment_path(@conn, :edit, @enrollment.id) %>
+TODO
