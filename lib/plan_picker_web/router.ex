@@ -6,10 +6,11 @@ defmodule PlanPickerWeb.Router do
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
-    plug :fetch_flash
+    plug :fetch_live_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :fetch_current_user
+    plug :put_root_layout, {PlanPickerWeb.LayoutView, :root}
   end
 
   pipeline :api do
@@ -93,9 +94,7 @@ defmodule PlanPickerWeb.Router do
     get "/enrollments/:id/edit/", EnrollmentController, :edit
     put "/enrollments/", EnrollmentController, :update
 
-    get "/enrollments/:id/classes", ClassManagementController, :index
-    get "/enrollments/:enrollment_id/subjects/:subject_id/classes", ClassManagementController, :index
-    get "/enrollments/:enrollment_id/subjects/:subject_id/classes/:class_id", ClassManagementController, :index
+    live "/enrollments/:id/classes", ClassManagementLive
   end
 
   # admin only routes
