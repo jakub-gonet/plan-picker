@@ -108,11 +108,19 @@ defmodule PlanPickerWeb.UserAuth do
     end
   end
 
+  def authenticated?(conn) do
+    !!conn.assigns[:current_user]
+  end
+
+  def current_user(conn) do
+    conn.assigns[:current_user]
+  end
+
   @doc """
   Used for routes that require the user to not be authenticated.
   """
   def redirect_if_user_is_authenticated(conn, _opts) do
-    if conn.assigns[:current_user] do
+    if authenticated?(conn) do
       conn
       |> redirect(to: signed_in_path(conn))
       |> halt()
@@ -128,7 +136,7 @@ defmodule PlanPickerWeb.UserAuth do
   they use the application at all, here would be a good place.
   """
   def require_authenticated_user(conn, _opts) do
-    if conn.assigns[:current_user] do
+    if authenticated?(conn) do
       conn
     else
       conn
@@ -145,7 +153,7 @@ defmodule PlanPickerWeb.UserAuth do
   Requires a user to be authenticated (connection must be piped through :require_authenticated_user first)
   """
   def require_role(conn, role) do
-    if PlanPicker.Role.has_role?(conn.assigns[:current_user], role) do
+    if Role.has_role?(current_user(conn), role) do
       conn
     else
       conn
