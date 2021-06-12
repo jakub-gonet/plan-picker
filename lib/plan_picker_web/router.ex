@@ -73,7 +73,6 @@ defmodule PlanPickerWeb.Router do
 
   scope "/", PlanPickerWeb do
     pipe_through [:browser, :require_authenticated_user]
-    get "/enrollments/", EnrollmentController, :index
     get "/enrollments/:id/show", EnrollmentController, :show
   end
 
