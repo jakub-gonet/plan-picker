@@ -12,11 +12,9 @@
   </head>
   <body>
     <header>
-  <%= render "_navbar.html", assigns %>
-</header>
-  <main role="main" class="container">
-    <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
-    <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+      <%= render "_navbar.html", assigns %>
+    </header>
+    <main role="main" class="container">
       <%= @inner_content %>
     </main>
   </body>
