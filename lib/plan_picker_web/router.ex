@@ -12,8 +12,14 @@ defmodule PlanPickerWeb.Router do
     plug :fetch_current_user
   end
 
-  pipeline :api do
-    plug :accepts, ["json"]
+  pipeline :is_moderator do
+    plug :require_authenticated_user
+    plug :require_role, :moderator
+  end
+
+  pipeline :is_admin do
+    plug :require_authenticated_user
+    plug :require_role, :admin
   end
 
   scope "/", PlanPickerWeb do
@@ -22,18 +28,7 @@ defmodule PlanPickerWeb.Router do
     get "/", PageController, :index
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", PlanPickerWeb do
-  #   pipe_through :api
-  # end
-
   # Enables LiveDashboard only for development
-  #
-  # If you want to use the LiveDashboard in production, you should put
-  # it behind authentication and allow only admins to access it.
-  # If your application does not have an admins-only section yet,
-  # you can use Plug.BasicAuth to set up some basic authentication
-  # as long as you are also using SSL (which you should anyway).
   if Mix.env() in [:dev, :test] do
     import Phoenix.LiveDashboard.Router
 
@@ -44,7 +39,6 @@ defmodule PlanPickerWeb.Router do
   end
 
   ## Authentication routes
-
   scope "/", PlanPickerWeb.Accounts do
     pipe_through [:browser, :redirect_if_user_is_authenticated]
 
@@ -59,7 +53,6 @@ defmodule PlanPickerWeb.Router do
   end
 
   ## Session management routes
-
   scope "/", PlanPickerWeb.Accounts do
     pipe_through [:browser]
 
@@ -70,7 +63,6 @@ defmodule PlanPickerWeb.Router do
   end
 
   ## User settings routes
-
   scope "/", PlanPickerWeb.Accounts do
     pipe_through [:browser, :require_authenticated_user]
 
@@ -81,26 +73,27 @@ defmodule PlanPickerWeb.Router do
 
   scope "/", PlanPickerWeb do
     pipe_through [:browser, :require_authenticated_user]
-    get "/enrollments/", EnrollmentController, :get_enrollments_for_current_user
+    get "/enrollments/", EnrollmentController, :index
+    get "/enrollments/:id/show", EnrollmentController, :show
   end
 
   # moderator or admin routes
   scope "/manage/", PlanPickerWeb do
-    pipe_through [:browser, :require_authenticated_user, :require_moderator_role]
+    pipe_through [:browser, :is_moderator]
 
-    get "/enrollments/", EnrollmentController, :index
-    get "/enrollments/:id/show/", EnrollmentController, :show
-    get "/enrollments/:id/edit/", EnrollmentController, :edit
-    put "/enrollments/", EnrollmentController, :update
+    get "/enrollments/", EnrollmentManagementController, :index
+    get "/enrollments/:id/show", EnrollmentManagementController, :show
+    get "/enrollments/:id/edit", EnrollmentManagementController, :edit
+    put "/enrollments/", EnrollmentManagementController, :update
   end
 
   # admin only routes
   scope "/manage/", PlanPickerWeb do
-    pipe_through [:browser, :require_authenticated_user, :require_admin_role]
+    pipe_through [:browser, :is_admin]
 
-    get "/enrollments/new", EnrollmentController, :new
-    post "/enrollments/", EnrollmentController, :create
-    delete "/enrollments/:id", EnrollmentController, :delete
+    get "/enrollments/new", EnrollmentManagementController, :new
+    post "/enrollments/", EnrollmentManagementController, :create
+    delete "/enrollments/:id", EnrollmentManagementController, :delete
 
     get "/users/", UserController, :index
   end

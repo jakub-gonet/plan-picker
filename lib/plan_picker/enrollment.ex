@@ -36,10 +36,7 @@ defmodule PlanPicker.Enrollment do
   """
   def assign_user_to_enrollment(enrollment, user) do
     # fetch enrollment with associations
-    enrollment =
-      Enrollment
-      |> Repo.get!(enrollment.id)
-      |> Repo.preload(:users)
+    enrollment = Repo.preload(enrollment, :users)
 
     enrollment
     |> change()
