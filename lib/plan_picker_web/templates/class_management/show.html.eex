@@ -3,17 +3,7 @@
     <p class="content"> <%= term.interval %> </p>
 <% end %>
 <%= if @selected do %>
-    <%= if length(@class.users) > 0 do %>
-        <%= for user <- @class.users do %>
-            <div class="block">
-                <%= user.index_no %>, <%= user.name %> <%= user.last_name %>
-            </div>
-    <% end %>
-    <% else %>
-        <div class="block">
-            There are no users assigned to this group.
-        </div>
-    <% end %>
+    <%= render "_user_list.html", conn: @conn, users: @class.users, no_users_prompt: "There are no users in this group." %>
 <% else %>
     <%= length(@class.users) %> users in this group.
 <% end %>

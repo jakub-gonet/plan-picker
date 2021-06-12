@@ -3,17 +3,7 @@
 
 <div class="columns">
     <div class="column is-one-quarter">
-        <%= if length(@enrollment.users) > 0 do %>
-            <%= for user <- @enrollment.users do %>
-                <div class="block">
-                    <%= user.index_no %>, <%= user.name %> <%= user.last_name %>
-                </div>
-        <% end %>
-        <% else %>
-            <div class="block">
-                There are no users assigned to this enrollment.
-            </div>
-        <% end %>
+        <%= render "_user_list.html", conn: @enrollment, users: @enrollment.users, no_users_prompt: "There are no users assigned to this enrollment." %>
     </div>
     <div class="column">
         <div class="tabs is-toggle is-centered">

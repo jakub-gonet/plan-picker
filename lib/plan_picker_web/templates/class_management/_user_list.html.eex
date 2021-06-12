@@ -1,0 +1,11 @@
+<%= if length(@users) > 0 do %>
+    <%= for user <- @users do %>
+        <div class="block">
+            <%= user.index_no %>, <%= user.name %> <%= user.last_name %>
+        </div>
+<% end %>
+<% else %>
+    <div class="block">
+        <%= @no_users_prompt %>
+    </div>
+<% end %>
