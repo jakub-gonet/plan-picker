@@ -1,4 +1,4 @@
-defmodule PlanPickerWeb.ClassController do
+defmodule PlanPickerWeb.ClassManagementController do
   use PlanPickerWeb, :controller
 
   def index(conn, %{
@@ -37,7 +37,7 @@ defmodule PlanPickerWeb.ClassController do
     case enrollment.subjects do
       [selected | _] ->
         redirect(conn,
-          to: Routes.class_path(conn, :index, enrollment.id, selected.id)
+          to: Routes.class_management_path(conn, :index, enrollment.id, selected.id)
         )
 
       _ ->

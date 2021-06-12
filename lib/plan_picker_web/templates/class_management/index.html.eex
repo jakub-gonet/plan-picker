@@ -22,7 +22,7 @@
                     <%= if subject.id == @selected_subject.id do %>
                         <li class="is-active"><a> <%= subject.name %> </a></li>
                     <% else %>
-                        <li><%= link subject.name, to: Routes.class_path(@conn, :index, @enrollment.id, subject.id) %></li>
+                        <li><%= link subject.name, to: Routes.class_management_path(@conn, :index, @enrollment.id, subject.id) %></li>
                     <% end %>
                 <% end %>
             </ul>
@@ -35,7 +35,7 @@
             <%= for class <- @selected_subject.classes do %>
                 <% class_is_selected = @selected_class && @selected_class.id == class.id %>
                 <%= if !class_is_selected do %>
-                    <%= link to: Routes.class_path(@conn, :index, @enrollment.id, @selected_subject.id, class.id), class: :box do %>
+                    <%= link to: Routes.class_management_path(@conn, :index, @enrollment.id, @selected_subject.id, class.id), class: :box do %>
                         <%= render "show.html", conn: @conn, class: class, selected: false %>
                     <% end %>
                 <% end %>
