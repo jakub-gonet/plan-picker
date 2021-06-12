@@ -4,12 +4,24 @@
         <%= if length(@enrollment.users) == 0 do %>
             There are no users assigned to this enrollment.
         <% end %>
-        <%= for user <- @enrollment.users do %>
-            <button class="button<%= if Enum.member?(@selected_users, user) do " is-primary" end %>" phx-click="toggle_user" phx-value-id="<%= user.id %>">
-                <%= user.name %> <%= user.last_name %>
-            </button>
-        <% end %>
+
+        <table class="table is-fullwidth is-hoverable is-striped">
+            <%= for user <- @enrollment.users do %>
+                <tr>
+                    <%= if @selected_class && Enum.member?(@selected_class.users, user) do %>
+                        <td>
+                            <del> <%= user.name %> <%= user.last_name %> </del>
+                        </td>
+                    <% else %>
+                        <td class="<%= if Enum.member?(@selected_users, user) do "is-selected" end %>" phx-click="toggle_user" phx-value-id="<%= user.id %>">
+                            <%= user.name %> <%= user.last_name %>
+                        </td>
+                    <% end %>
+                <tr>
+            <% end %>
+        </table>
     </div>
+
     <div class="column">
         <div class="tabs is-toggle is-centered is-fullwidth">
             <ul>
@@ -26,23 +38,38 @@
                 <% end %>
             </ul>
         </div>
+
         <%= if length(@selected_subject.classes) == 0 do %>
             <div class="box">
                 There are no classes in this subject.
             </div>
         <% end %>
+
         <%= for class <- @selected_subject.classes do %>
             <div class="box" phx-click="select_class" phx-value-id="<%= class.id %>">
                 <h2 class="subtitle"> <%= class.teacher.name %> <%= class.teacher.surname %> <h2>
+
                 <%= for term <- class.terms do %>
                     <div class="content"> <%= term.interval %> </div>
                 <% end %>
+
                 <%= if @selected_class && class.id == @selected_class.id do %>
                     <%= if length(@selected_users) == 0 do %>
                         <button class="button" disabled>Select at least one user</button>
                     <% else %>
-                        <button class="button is-primary">Add <%= length(@selected_users) %> user(s) to group</button>
+                        <button class="button is-primary" phx-click="add_users_to_class">Add <%= length(@selected_users) %> user(s) to group</button>
                     <% end %>
+
+                    <table class="table is-fullwidth is-hoverable is-striped">
+                        <tbody>
+                            <%= for user <- class.users do %>
+                                <tr class="content">
+                                    <td> <%= user.name %> <%= user.last_name %> </td>
+                                    <td> <button class="button is-danger" phx-click="remove_user_from_class" phx-value-id="<%= user.id %>"> Remove from group </button> </td>
+                                </tr>
+                            <% end %>
+                        </tbody>
+                    </table>
                 <% else %>
                     <div class="content"> <%= length(class.users) %> assigned to this group. </div>
                 <% end %>

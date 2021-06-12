@@ -48,12 +48,62 @@ defmodule PlanPickerWeb.ClassManagementLive do
 
         _ ->
           new_class = PlanPicker.Class.get_class!(class_id)
-          {:noreply, assign(socket, :selected_class, new_class)}
+
+          selected_users =
+            Enum.filter(socket.assigns[:selected_users], &(!Enum.member?(new_class.users, &1)))
+
+          socket =
+            socket
+            |> assign(:selected_class, new_class)
+            |> assign(:selected_users, selected_users)
+
+          {:noreply, socket}
       end
     else
       new_class = PlanPicker.Class.get_class!(class_id)
-      {:noreply, assign(socket, :selected_class, new_class)}
+
+      selected_users =
+        Enum.filter(socket.assigns[:selected_users], &(!Enum.member?(new_class.users, &1)))
+
+      socket =
+        socket
+        |> assign(:selected_class, new_class)
+        |> assign(:selected_users, selected_users)
+
+      {:noreply, socket}
     end
+  end
+
+  def handle_event("add_users_to_class", _opts, socket) do
+    new_class =
+      PlanPicker.Class.assign_users_to_class!(
+        socket.assigns[:selected_class],
+        socket.assigns[:selected_users]
+      )
+
+    subject = socket.assigns[:selected_subject]
+
+    socket =
+      socket
+      |> assign(:selected_class, new_class)
+      |> assign(:selected_users, [])
+      |> assign(:selected_subject, PlanPicker.Subject.get_subject!(subject.id))
+
+    {:noreply, socket}
+  end
+
+  def handle_event("remove_user_from_class", %{"id" => user_id}, socket) do
+    user = PlanPicker.Accounts.get_user!(user_id)
+    new_class = PlanPicker.Class.remove_user_from_class!(socket.assigns[:selected_class], user)
+
+    subject = socket.assigns[:selected_subject]
+
+    socket =
+      socket
+      |> assign(:selected_class, new_class)
+      |> assign(:selected_subject, PlanPicker.Subject.get_subject!(subject.id))
+
+    {:noreply, socket}
   end
 
   defp get_subject(enrollment) do
