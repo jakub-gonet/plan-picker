@@ -33,6 +33,8 @@ defmodule PlanPicker.Class do
   def assign_users!(class, users) do
     class = Repo.preload(class, :users)
 
+    users = Enum.filter(users, &Enum.member?(class.users, &1))
+
     class
     |> change()
     |> put_assoc(:users, users ++ class.users)
