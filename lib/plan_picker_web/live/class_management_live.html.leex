@@ -1,1 +1,52 @@
-TODO: Classes live view
+<h1 class="title"> Classes in <%= @enrollment.name %> </h1>
+<div class="columns">
+    <div class="column is-one-quarter">
+        <%= if length(@enrollment.users) == 0 do %>
+            There are no users assigned to this enrollment.
+        <% end %>
+        <%= for user <- @enrollment.users do %>
+            <button class="button<%= if Enum.member?(@selected_users, user) do " is-primary" end %>" phx-click="toggle_user" phx-value-id="<%= user.id %>">
+                <%= user.name %> <%= user.last_name %>
+            </button>
+        <% end %>
+    </div>
+    <div class="column">
+        <div class="tabs is-toggle is-centered is-fullwidth">
+            <ul>
+                <%= for subject <- @enrollment.subjects do %>
+                    <%= if @selected_subject.id == subject.id do %>
+                        <li class="is-active">
+                            <a> <%= subject.name %> </a>
+                        </li>
+                    <% else %>
+                        <li phx-click="select_subject" phx-value-id="<%= subject.id %>">
+                            <a> <%= subject.name %> </a>
+                        </li>
+                    <% end %>
+                <% end %>
+            </ul>
+        </div>
+        <%= if length(@selected_subject.classes) == 0 do %>
+            <div class="box">
+                There are no classes in this subject.
+            </div>
+        <% end %>
+        <%= for class <- @selected_subject.classes do %>
+            <div class="box" phx-click="select_class" phx-value-id="<%= class.id %>">
+                <h2 class="subtitle"> <%= class.teacher.name %> <%= class.teacher.surname %> <h2>
+                <%= for term <- class.terms do %>
+                    <div class="content"> <%= term.interval %> </div>
+                <% end %>
+                <%= if @selected_class && class.id == @selected_class.id do %>
+                    <%= if length(@selected_users) == 0 do %>
+                        <button class="button" disabled>Select at least one user</button>
+                    <% else %>
+                        <button class="button is-primary">Add <%= length(@selected_users) %> user(s) to group</button>
+                    <% end %>
+                <% else %>
+                    <div class="content"> <%= length(class.users) %> assigned to this group. </div>
+                <% end %>
+            </div>
+        <% end %>
+    </div>
+</div>
