@@ -2,9 +2,10 @@ defmodule PlanPickerWeb.EnrollmentController do
   use PlanPickerWeb, :controller
 
   alias PlanPicker.Enrollment
+  alias PlanPickerWeb.UserAuth
 
   def index(conn, _params) do
-    enrollments = Enrollment.get_enrollments_for_user(conn.assigns[:current_user])
+    enrollments = conn |> UserAuth.current_user() |> Enrollment.get_enrollments_for_user()
 
     render(conn, "index.html", enrollments: enrollments)
   end

@@ -68,6 +68,7 @@ defmodule PlanPickerWeb do
 
       import PlanPickerWeb.ErrorHelpers
       import PlanPickerWeb.Gettext
+      import PlanPickerWeb.UserAuth, only: [current_user: 1, authenticated?: 1]
       alias PlanPickerWeb.Router.Helpers, as: Routes
     end
   end

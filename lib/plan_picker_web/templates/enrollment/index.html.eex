@@ -1,7 +1,9 @@
-<h1> Your enrollments </h1>
+<div class="content">
+    <h1> Your enrollments </h1>
 
-<ol>
-    <%= for enrollment <- @enrollments do %>
-        <li> <%= link enrollment.name, to: Routes.enrollment_path(@conn, :show, enrollment.id) %> (<%= enrollment.state %>) </li>
-    <% end %>
-</ol>
+    <ol>
+        <%= for enrollment <- @enrollments do %>
+            <li> <%= link enrollment.name, to: Routes.enrollment_path(@conn, :show, enrollment.id) %> (<%= enrollment.state %>) </li>
+        <% end %>
+    </ol>
+</div>

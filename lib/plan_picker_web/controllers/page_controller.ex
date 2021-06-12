@@ -1,15 +1,14 @@
 defmodule PlanPickerWeb.PageController do
   use PlanPickerWeb, :controller
+  import PlanPickerWeb.UserAuth, only: [current_user: 1]
 
   def index(conn, _params) do
-    case conn.assigns[:current_user] do
+    case current_user(conn) do
       nil ->
         render(conn, "anonymous_index.html")
 
       user ->
-        moderator = PlanPicker.Role.has_role?(user, :moderator)
-        admin = PlanPicker.Role.has_role?(user, :admin)
-        render(conn, "index.html", is_moderator: moderator, is_admin: admin)
+        render(conn, "index.html", current_user: user)
     end
   end
 end

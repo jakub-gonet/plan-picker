@@ -1,0 +1,4 @@
+<div class="buttons">
+  <%= link to: Routes.user_registration_path(@conn, :new), class: "button is-primary" do %><strong>Register</strong><% end %>
+  <%= link "Log in", to: Routes.user_session_path(@conn, :new), class: "button is-light" %>
+</div>

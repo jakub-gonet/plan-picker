@@ -3,6 +3,8 @@ defmodule PlanPicker.Role do
   import Ecto.Changeset
   import Ecto.Query, only: [from: 2]
 
+  alias PlanPicker.{Accounts, Repo, Role}
+
   schema "roles" do
     field :name, Ecto.Enum, values: [:moderator, :admin]
     belongs_to :user, PlanPicker.Accounts.User
@@ -10,16 +12,23 @@ defmodule PlanPicker.Role do
     timestamps()
   end
 
+  def get_roles_for(user) do
+    user
+    |> Ecto.assoc(:role)
+    |> Repo.all()
+    |> Enum.map(& &1.name)
+  end
+
   @doc """
   Checks whether the user has a role with name: role_name.
   """
   def has_role?(user, role_name) do
     query =
-      from u in PlanPicker.Accounts.User,
+      from u in Accounts.User,
         join: r in assoc(u, :role),
         where: r.name == ^role_name and u.id == ^user.id
 
-    PlanPicker.Repo.exists?(query)
+    Repo.exists?(query)
   end
 
   @doc """
@@ -29,11 +38,11 @@ defmodule PlanPicker.Role do
   """
   def assign_role(user, role_name) do
     if not has_role?(user, role_name) do
-      %PlanPicker.Role{name: role_name}
-      |> PlanPicker.Repo.preload(:user)
+      %Role{name: role_name}
+      |> Repo.preload(:user)
       |> Ecto.Changeset.change()
       |> Ecto.Changeset.put_assoc(:user, user)
-      |> PlanPicker.Repo.insert!()
+      |> Repo.insert!()
     end
   end
 
@@ -44,11 +53,11 @@ defmodule PlanPicker.Role do
   """
   def unassign_role(user, role_name) do
     query =
-      from u in PlanPicker.Accounts.User,
+      from u in Accounts.User,
         join: r in assoc(u, :role),
         where: r.name == ^role_name and u.id == ^user.id
 
-    PlanPicker.Repo.delete_all(query)
+    Repo.delete_all(query)
   end
 
   @doc false

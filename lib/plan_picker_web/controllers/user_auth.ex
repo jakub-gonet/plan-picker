@@ -2,7 +2,7 @@ defmodule PlanPickerWeb.UserAuth do
   import Plug.Conn
   import Phoenix.Controller
 
-  alias PlanPicker.Accounts
+  alias PlanPicker.{Accounts, Role}
   alias PlanPickerWeb.Router.Helpers, as: Routes
 
   # Make the remember me cookie valid for 60 days.
@@ -108,11 +108,19 @@ defmodule PlanPickerWeb.UserAuth do
     end
   end
 
+  def authenticated?(conn) do
+    !!conn.assigns[:current_user]
+  end
+
+  def current_user(conn) do
+    conn.assigns[:current_user]
+  end
+
   @doc """
   Used for routes that require the user to not be authenticated.
   """
   def redirect_if_user_is_authenticated(conn, _opts) do
-    if conn.assigns[:current_user] do
+    if authenticated?(conn) do
       conn
       |> redirect(to: signed_in_path(conn))
       |> halt()
@@ -128,7 +136,7 @@ defmodule PlanPickerWeb.UserAuth do
   they use the application at all, here would be a good place.
   """
   def require_authenticated_user(conn, _opts) do
-    if conn.assigns[:current_user] do
+    if authenticated?(conn) do
       conn
     else
       conn
@@ -145,13 +153,20 @@ defmodule PlanPickerWeb.UserAuth do
   Requires a user to be authenticated (connection must be piped through :require_authenticated_user first)
   """
   def require_role(conn, role) do
-    if PlanPicker.Role.has_role?(conn.assigns[:current_user], role) do
+    if Role.has_role?(current_user(conn), role) do
       conn
     else
       conn
       |> put_flash(:error, "You do not have required permissions to view this page.")
       |> redirect(to: Routes.user_session_path(conn, :new))
       |> halt()
+    end
+  end
+
+  def put_roles_if_authenticated(conn, _opts) do
+    case current_user(conn) do
+      nil -> conn
+      user -> assign(conn, :roles, Role.get_roles_for(user))
     end
   end
 

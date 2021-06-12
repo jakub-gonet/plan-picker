@@ -12,18 +12,23 @@ defmodule PlanPickerWeb.Router do
     plug :fetch_current_user
   end
 
-  pipeline :is_moderator do
+  pipeline :require_authenticated_user_having_data do
     plug :require_authenticated_user
+    plug :put_roles_if_authenticated
+  end
+
+  pipeline :require_moderator_role do
+    plug :require_authenticated_user_having_data
     plug :require_role, :moderator
   end
 
-  pipeline :is_admin do
-    plug :require_authenticated_user
+  pipeline :require_admin_role do
+    plug :require_authenticated_user_having_data
     plug :require_role, :admin
   end
 
   scope "/", PlanPickerWeb do
-    pipe_through :browser
+    pipe_through [:browser, :put_roles_if_authenticated]
 
     get "/", PageController, :index
   end
@@ -64,7 +69,7 @@ defmodule PlanPickerWeb.Router do
 
   ## User settings routes
   scope "/", PlanPickerWeb.Accounts do
-    pipe_through [:browser, :require_authenticated_user]
+    pipe_through [:browser, :require_authenticated_user_having_data]
 
     get "/users/settings", UserSettingsController, :edit
     put "/users/settings", UserSettingsController, :update
@@ -72,14 +77,13 @@ defmodule PlanPickerWeb.Router do
   end
 
   scope "/", PlanPickerWeb do
-    pipe_through [:browser, :require_authenticated_user]
-    get "/enrollments/", EnrollmentController, :index
+    pipe_through [:browser, :require_authenticated_user_having_data]
     get "/enrollments/:id/show", EnrollmentController, :show
   end
 
   # moderator or admin routes
   scope "/manage/", PlanPickerWeb do
-    pipe_through [:browser, :is_moderator]
+    pipe_through [:browser, :require_moderator_role]
 
     get "/enrollments/", EnrollmentManagementController, :index
     get "/enrollments/:id/show", EnrollmentManagementController, :show
@@ -89,7 +93,7 @@ defmodule PlanPickerWeb.Router do
 
   # admin only routes
   scope "/manage/", PlanPickerWeb do
-    pipe_through [:browser, :is_admin]
+    pipe_through [:browser, :require_admin_role]
 
     get "/enrollments/new", EnrollmentManagementController, :new
     post "/enrollments/", EnrollmentManagementController, :create
