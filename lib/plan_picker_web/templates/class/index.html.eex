@@ -1,0 +1,49 @@
+<h1 class="title"> Classes in <%= @enrollment.name %> </h1>
+<%= link "Back to enrollment", to: Routes.enrollment_path(@conn, :show, @enrollment.id) %>
+
+<div class="columns">
+    <div class="column is-one-quarter">
+        <%= if length(@enrollment.users) > 0 do %>
+            <%= for user <- @enrollment.users do %>
+                <div class="block">
+                    <%= user.index_no %>, <%= user.name %> <%= user.last_name %>
+                </div>
+        <% end %>
+        <% else %>
+            <div class="block">
+                There are no users assigned to this enrollment.
+            </div>
+        <% end %>
+    </div>
+    <div class="column">
+        <div class="tabs is-toggle is-centered">
+            <ul>
+                <%= for subject <- @enrollment.subjects do %>
+                    <%= if subject.id == @selected_subject.id do %>
+                        <li class="is-active"><a> <%= subject.name %> </a></li>
+                    <% else %>
+                        <li><%= link subject.name, to: Routes.class_path(@conn, :index, @enrollment.id, subject.id) %></li>
+                    <% end %>
+                <% end %>
+            </ul>
+        </div>
+
+        <%= if length(@selected_subject.classes) > 0 do %>
+            <%= if @selected_class != nil do %>
+                <div class="box"> <%= render "show.html", conn: @conn, class: @selected_class, selected: true %> </div>
+            <% end %>
+            <%= for class <- @selected_subject.classes do %>
+                <% class_is_selected = @selected_class && @selected_class.id == class.id %>
+                <%= if !class_is_selected do %>
+                    <%= link to: Routes.class_path(@conn, :index, @enrollment.id, @selected_subject.id, class.id), class: :box do %>
+                        <%= render "show.html", conn: @conn, class: class, selected: false %>
+                    <% end %>
+                <% end %>
+            <% end %>
+        <% else %>
+            <div class="block">
+                There are no classes of this subject.
+            </div>
+        <% end %>
+    </div>
+</div>

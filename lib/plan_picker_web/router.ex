@@ -92,6 +92,10 @@ defmodule PlanPickerWeb.Router do
     get "/enrollments/:id/show/", EnrollmentController, :show
     get "/enrollments/:id/edit/", EnrollmentController, :edit
     put "/enrollments/", EnrollmentController, :update
+
+    get "/enrollments/:id/classes", ClassController, :index
+    get "/enrollments/:enrollment_id/subjects/:subject_id/classes", ClassController, :index
+    get "/enrollments/:enrollment_id/subjects/:subject_id/classes/:class_id", ClassController, :index
   end
 
   # admin only routes
