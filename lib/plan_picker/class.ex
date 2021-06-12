@@ -24,6 +24,21 @@ defmodule PlanPicker.Class do
     |> Repo.insert!()
   end
 
+  def get_class!(class_id, opts \\ [preload: [:teacher, :users, :terms]]) do
+    PlanPicker.Class
+    |> Repo.get!(class_id)
+    |> Repo.preload(opts[:preload])
+  end
+
+  def assign_users!(class, users) do
+    class = Repo.preload(class, :users)
+
+    class
+    |> change()
+    |> put_assoc(:users, users ++ class.users)
+    |> Repo.update!()
+  end
+
   @doc false
   def changeset(class, attrs) do
     class

@@ -1,6 +1,7 @@
 defmodule PlanPicker.Subject do
   use PlanPicker.Schema
   import Ecto.Changeset
+  import Ecto.Query, only: [from: 2]
   alias PlanPicker.Repo
 
   schema "subjects" do
@@ -18,6 +19,17 @@ defmodule PlanPicker.Subject do
     |> put_assoc(:classes, [])
     |> put_assoc(:enrollment, enrollment)
     |> Repo.insert!()
+  end
+
+  def get_subject_in_enrollment!(enrollment, subject_id, opts \\ [preload: [classes: [:terms, :teacher, :users]]]) do
+    query = from e in PlanPicker.Enrollment,
+      join: s in assoc(e, :subjects),
+      where: e.id == ^enrollment.id and s.id == ^subject_id,
+      select: s
+
+    query
+    |> Repo.one!()
+    |> Repo.preload(opts[:preload])
   end
 
   @doc false
