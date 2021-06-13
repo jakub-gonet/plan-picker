@@ -1,0 +1,42 @@
+.term-overlay {
+  position: relative;
+}
+
+@mixin term-overlay-common {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 5rem;
+  color: white;
+
+  &:hover {
+    opacity: 0.5;
+  }
+}
+
+.term-overlay > .term-overlay-left {
+  @include term-overlay-common;
+  left: 0;
+  &:hover {
+    background: linear-gradient(#f14668, #cc0f35);
+    &::before {
+      content: "-";
+    }
+  }
+}
+
+.term-overlay > .term-overlay-right {
+  @include term-overlay-common;
+  right: 0;
+
+  &:hover {
+    background: linear-gradient(#48c774, #00947e);
+    &::before {
+      content: "+";
+    }
+  }
+}
