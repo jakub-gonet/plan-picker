@@ -8,12 +8,12 @@
         <table class="table is-fullwidth is-hoverable is-striped">
             <%= for user <- @enrollment.users do %>
                 <tr>
-                    <%= if @selected_class && Enum.member?(@selected_class.users, user) do %>
+                    <%= if @selected_class && selected?(@selected_class.users, user) do %>
                         <td>
                             <del> <%= user.name %> <%= user.last_name %> </del>
                         </td>
                     <% else %>
-                        <td class="<%= if Enum.member?(@selected_users, user) do "is-selected" end %>" phx-click="toggle_user" phx-value-id="<%= user.id %>">
+                        <td class="<%= if selected?(@selected_users, user) do "is-selected" end %>" phx-click="toggle_user" phx-value-id="<%= user.id %>">
                             <%= user.name %> <%= user.last_name %>
                         </td>
                     <% end %>
@@ -26,7 +26,7 @@
         <div class="tabs is-toggle is-centered is-fullwidth">
             <ul>
                 <%= for subject <- @enrollment.subjects do %>
-                    <%= if @selected_subject.id == subject.id do %>
+                    <%= if selected?(@selected_subject.id, subject.id) do %>
                         <li class="is-active">
                             <a> <%= subject.name %> </a>
                         </li>
@@ -53,7 +53,7 @@
                     <div class="content"> <%= term.interval %> </div>
                 <% end %>
 
-                <%= if @selected_class && class.id == @selected_class.id do %>
+                <%= if selected?(@selected_class, class) do %>
                     <%= if length(@selected_users) == 0 do %>
                         <button class="button" disabled>Select at least one user</button>
                     <% else %>

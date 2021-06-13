@@ -2,6 +2,18 @@ defmodule PlanPickerWeb.ClassManagementLive do
   use PlanPickerWeb, :live_view
   alias PlanPicker.{Accounts, Class, Enrollment, Subject}
 
+  def selected?(selected, el) when is_list(selected) do
+    Enum.member?(selected, el)
+  end
+
+  def selected?(nil, _) do
+    false
+  end
+
+  def selected?(selected, el) do
+    selected == el
+  end
+
   def mount(%{"id" => enrollment_id}, _session, socket) do
     enrollment = Enrollment.get_enrollment!(enrollment_id)
     subject = get_first_subject(enrollment)
