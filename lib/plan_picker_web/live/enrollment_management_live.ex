@@ -14,7 +14,7 @@ defmodule PlanPickerWeb.EnrollmentManagementLive do
 
     roles = Role.get_roles_for(user)
 
-    if Enum.member?(enrollment.users, user) || Enum.member?(roles, :admin) do
+    if Enum.member?(enrollment.users, user) || :admin in roles do
       changeset = change(enrollment)
 
       socket =
