@@ -5,9 +5,10 @@ services:
     depends_on:
       - db
     environment:
+      SECRET_KEY_BASE: hj%24b
       PGUSER: postgres
       PGPASSWORD: postgres
-      PGDATABASE: plan_picker_dev
+      PGDATABASE: plan_picker_prod
       PGPORT: 5432
       PGHOST: db
     ports:
