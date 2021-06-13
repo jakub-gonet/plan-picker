@@ -49,8 +49,8 @@
             <div class="box" phx-click="select_class" phx-value-id="<%= class.id %>">
                 <h2 class="subtitle"> <%= class.teacher.name %> <%= class.teacher.surname %> <h2>
 
-                <%= for term <- class.terms do %>
-                    <div class="content"> <%= term.interval %> </div>
+                <%= for {term,i} <- Enum.with_index(class.terms, 1) do %>
+                    <div class="is-size-6">Term <%= i %>: <%= Timestamp.Range.to_human_readable_iodata(term.interval) %> </div>
                 <% end %>
 
                 <%= if selected?(@selected_class, class) do %>
@@ -71,7 +71,7 @@
                         </tbody>
                     </table>
                 <% else %>
-                    <div class="content"> <%= length(class.users) %> assigned to this group. </div>
+                    <span class="is-size-5"> <%= length(class.users) %> assigned to this group. </span>
                 <% end %>
             </div>
         <% end %>
