@@ -5,7 +5,7 @@ services:
     depends_on:
       - db
     environment:
-      SECRET_KEY_BASE: hj%24b
+      SECRET_KEY_BASE: yDqPBrnjgmD2M3ByI9rHmkrP169y0w2rHfMIR0Qv5M/uy4SL78isYAYyyYv2RJ9r
       PGUSER: postgres
       PGPASSWORD: postgres
       PGDATABASE: plan_picker_prod
