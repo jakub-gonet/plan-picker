@@ -8,7 +8,10 @@ defmodule PlanPicker.Enrollment do
     field :name, :string
     field :state, Ecto.Enum, values: [:closed, :opened, :finished]
 
-    many_to_many :users, PlanPicker.Accounts.User, join_through: "enrollments_users"
+    many_to_many :users, PlanPicker.Accounts.User,
+      join_through: "enrollments_users",
+      on_replace: :delete
+
     has_many :subjects, PlanPicker.Subject
 
     timestamps()
@@ -41,6 +44,26 @@ defmodule PlanPicker.Enrollment do
     enrollment
     |> change()
     |> put_assoc(:users, [user | enrollment.users])
+    |> Repo.update!()
+  end
+
+  def assign_users_to_enrollment!(enrollment, users) do
+    enrollment = Repo.preload(enrollment, :users)
+
+    users = Enum.filter(users, &(!Enum.member?(enrollment.users, &1)))
+
+    enrollment
+    |> change()
+    |> put_assoc(:users, users ++ enrollment.users)
+    |> Repo.update!()
+  end
+
+  def unassign_users_from_enrollment!(enrollment, users) do
+    enrollment = Repo.preload(enrollment, :users)
+
+    enrollment
+    |> change()
+    |> put_assoc(:users, Enum.filter(enrollment.users, &(!Enum.member?(users, &1))))
     |> Repo.update!()
   end
 

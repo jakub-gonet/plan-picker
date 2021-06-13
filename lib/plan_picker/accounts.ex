@@ -59,6 +59,10 @@ defmodule PlanPicker.Accounts do
   """
   def get_user!(id), do: Repo.get!(User, id)
 
+  def get_all_users do
+    Repo.all(User)
+  end
+
   ## User registration
 
   @doc """
