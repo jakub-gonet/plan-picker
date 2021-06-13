@@ -1,9 +1,10 @@
 defmodule PlanPickerWeb.ClassManagementLive do
   use PlanPickerWeb, :live_view
+  alias PlanPicker.{Accounts, Class, Enrollment, Subject}
 
   def mount(%{"id" => enrollment_id}, _session, socket) do
-    enrollment = PlanPicker.Enrollment.get_enrollment!(enrollment_id)
-    subject = get_subject(enrollment)
+    enrollment = Enrollment.get_enrollment!(enrollment_id)
+    subject = get_first_subject(enrollment)
 
     socket =
       socket
@@ -16,7 +17,7 @@ defmodule PlanPickerWeb.ClassManagementLive do
   end
 
   def handle_event("toggle_user", %{"id" => user_id}, socket) do
-    user = PlanPicker.Accounts.get_user!(user_id)
+    user = Accounts.get_user!(user_id)
 
     selected_users = socket.assigns[:selected_users]
 
@@ -33,7 +34,7 @@ defmodule PlanPickerWeb.ClassManagementLive do
         {:noreply, socket}
 
       _ ->
-        new_subject = PlanPicker.Subject.get_subject!(subject_id)
+        new_subject = Subject.get_subject!(subject_id)
         {:noreply, assign(socket, :selected_subject, new_subject)}
     end
   end
@@ -47,7 +48,7 @@ defmodule PlanPickerWeb.ClassManagementLive do
           {:noreply, socket}
 
         _ ->
-          new_class = PlanPicker.Class.get_class!(class_id)
+          new_class = Class.get_class!(class_id)
 
           selected_users =
             Enum.filter(socket.assigns[:selected_users], &(!Enum.member?(new_class.users, &1)))
@@ -60,7 +61,7 @@ defmodule PlanPickerWeb.ClassManagementLive do
           {:noreply, socket}
       end
     else
-      new_class = PlanPicker.Class.get_class!(class_id)
+      new_class = Class.get_class!(class_id)
 
       selected_users =
         Enum.filter(socket.assigns[:selected_users], &(!Enum.member?(new_class.users, &1)))
@@ -76,7 +77,7 @@ defmodule PlanPickerWeb.ClassManagementLive do
 
   def handle_event("add_users_to_class", _opts, socket) do
     new_class =
-      PlanPicker.Class.assign_users_to_class!(
+      Class.assign_users_to_class!(
         socket.assigns[:selected_class],
         socket.assigns[:selected_users]
       )
@@ -87,28 +88,28 @@ defmodule PlanPickerWeb.ClassManagementLive do
       socket
       |> assign(:selected_class, new_class)
       |> assign(:selected_users, [])
-      |> assign(:selected_subject, PlanPicker.Subject.get_subject!(subject.id))
+      |> assign(:selected_subject, Subject.get_subject!(subject.id))
 
     {:noreply, socket}
   end
 
   def handle_event("remove_user_from_class", %{"id" => user_id}, socket) do
     user = PlanPicker.Accounts.get_user!(user_id)
-    new_class = PlanPicker.Class.remove_user_from_class!(socket.assigns[:selected_class], user)
+    new_class = Class.remove_user_from_class!(socket.assigns[:selected_class], user)
 
     subject = socket.assigns[:selected_subject]
 
     socket =
       socket
       |> assign(:selected_class, new_class)
-      |> assign(:selected_subject, PlanPicker.Subject.get_subject!(subject.id))
+      |> assign(:selected_subject, Subject.get_subject!(subject.id))
 
     {:noreply, socket}
   end
 
-  defp get_subject(enrollment) do
+  defp get_first_subject(enrollment) do
     case enrollment.subjects do
-      [subject | _] -> PlanPicker.Subject.get_subject!(subject.id)
+      [subject | _] -> Subject.get_subject!(subject.id)
       nil -> nil
     end
   end
