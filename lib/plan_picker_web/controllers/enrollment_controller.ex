@@ -11,8 +11,11 @@ defmodule PlanPickerWeb.EnrollmentController do
   end
 
   def show(conn, %{"id" => enrollment_id}) do
-    enrollment = Enrollment.get_enrollment!(enrollment_id)
+    terms =
+      enrollment_id
+      |> Enrollment.get_enrollment!()
+      |> Enrollment.get_terms_for_enrollment()
 
-    render(conn, "show.html", enrollment: enrollment)
+    render(conn, "show.html", terms: terms)
   end
 end
