@@ -5,7 +5,7 @@ defmodule PlanPickerWeb.EnrollmentManagementController do
   alias PlanPickerWeb.UserAuth
 
   def index(conn, _params) do
-    if Enum.member?(conn.assigns[:roles], :admin) do
+    if :admin in conn.assigns[:roles] do
       render(conn, "index.html", enrollments: Enrollment.get_all_enrollments())
     else
       enrollments = conn |> UserAuth.current_user() |> Enrollment.get_enrollments_for_user()

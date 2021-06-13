@@ -14,10 +14,10 @@ defmodule PlanPickerWeb.EnrollmentManagementLive do
 
     roles = Role.get_roles_for(user)
 
-    if Enum.member?(enrollment.users, user) || :admin in roles do
-      changeset = change(enrollment)
+    socket =
+      if user in enrollment.users || :admin in roles do
+        changeset = change(enrollment)
 
-      socket =
         socket
         |> assign(:enrollment, enrollment)
         |> assign(:changeset, changeset)
@@ -27,16 +27,13 @@ defmodule PlanPickerWeb.EnrollmentManagementLive do
           :available_users,
           Enum.filter(PlanPicker.Accounts.get_all_users(), &(!Enum.member?(enrollment.users, &1)))
         )
-
-      {:ok, socket}
-    else
-      socket =
+      else
         socket
         |> put_flash(:error, "You do not have the required permissions to edit this enrollment.")
         |> redirect(to: Routes.enrollment_management_path(socket, :index))
+      end
 
-      {:ok, socket}
-    end
+    {:ok, socket}
   end
 
   def handle_event("validate", %{"enrollment" => _enrollment_params}, socket) do

@@ -50,11 +50,9 @@ defmodule PlanPicker.Enrollment do
   def assign_users_to_enrollment!(enrollment, users) do
     enrollment = Repo.preload(enrollment, :users)
 
-    users = Enum.filter(users, &(!Enum.member?(enrollment.users, &1)))
-
     enrollment
     |> change()
-    |> put_assoc(:users, users ++ enrollment.users)
+    |> put_assoc(:users, Enum.uniq(users ++ enrollment.users))
     |> Repo.update!()
   end
 
@@ -63,7 +61,7 @@ defmodule PlanPicker.Enrollment do
 
     enrollment
     |> change()
-    |> put_assoc(:users, Enum.filter(enrollment.users, &(!Enum.member?(users, &1))))
+    |> put_assoc(:users, Enum.filter(enrollment.users, &(&1 not in users)))
     |> Repo.update!()
   end
 
