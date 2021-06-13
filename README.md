@@ -114,3 +114,16 @@ Ważniejsze pliki:
 # Schemat bazy
 
 ![](plan_picker_schema.png)
+
+## Znaczenie poszczególnych tabel
+
+- `users`, `teachers` - studenci i nauczyciele
+- `roles` - role użytkowników ze szczególnymi uprawnieniami
+- `users_tokens` - tokeny sesji użytkowników
+- `enrollments` - zapisy, na które studenci mogą się rejestrować
+- `subjects` - przedmioty w ramach zapisu
+- `classes` - grupy dziekańskie w ramach przedmiotu
+- `terms` - posczególne terminy (jedna grupa może mieć czasami zajęcia w wielu terminach)
+- `enrollments_users` - w zapisie brać udział mogą tylko studenci do niego przypisani, jeden student może przypisany do wielu zapisów
+- `classes_users` - do grupy dziekańskiej przypisywani są studenci, jeden student może przypisany do wielu grup dziekańskich
+- `points_assignments` - studenci mogą przyznawać grupom dziekańskim punkty priorytetu
