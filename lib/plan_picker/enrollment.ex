@@ -57,6 +57,37 @@ defmodule PlanPicker.Enrollment do
     |> Repo.preload(opts.preload)
   end
 
+  def get_terms_for_enrollment(enrollment) do
+    subjects_props = [:name]
+    class_props = [:type, :group_number, :teacher]
+    terms_props = [:interval, :location, :week_type]
+
+    enrollment
+    |> Repo.preload(subjects: [classes: [:terms, :points_assignments, :teacher]])
+    |> Map.get(:subjects)
+    |> Enum.map(&flatten_association({&1, subjects_props}, {:classes, [:terms | class_props]}))
+    |> Enum.flat_map(
+      &flatten_association({&1, subjects_props ++ class_props}, {:terms, terms_props})
+    )
+  end
+
+  defp flatten_association({parent, parent_props}, {children_name, child_props}) do
+    merge_props = fn parent, child ->
+      child_properties = Map.take(child, child_props)
+
+      parent
+      |> Map.take(parent_props)
+      |> Map.merge(child_properties)
+    end
+
+    parent
+    |> List.wrap()
+    |> Enum.map(&{&1, Map.get(&1, children_name)})
+    |> Enum.flat_map(fn {parent, children} ->
+      Enum.map(children, &merge_props.(parent, &1))
+    end)
+  end
+
   def get_all_enrollments do
     Repo.all(PlanPicker.Enrollment)
   end
