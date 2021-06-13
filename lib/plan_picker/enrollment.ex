@@ -8,7 +8,10 @@ defmodule PlanPicker.Enrollment do
     field :name, :string
     field :state, Ecto.Enum, values: [:closed, :opened, :finished]
 
-    many_to_many :users, PlanPicker.Accounts.User, join_through: "enrollments_users"
+    many_to_many :users, PlanPicker.Accounts.User,
+      join_through: "enrollments_users",
+      on_replace: :delete
+
     has_many :subjects, PlanPicker.Subject
 
     timestamps()
@@ -41,6 +44,24 @@ defmodule PlanPicker.Enrollment do
     enrollment
     |> change()
     |> put_assoc(:users, [user | enrollment.users])
+    |> Repo.update!()
+  end
+
+  def assign_users_to_enrollment!(enrollment, users) do
+    enrollment = Repo.preload(enrollment, :users)
+
+    enrollment
+    |> change()
+    |> put_assoc(:users, Enum.uniq(users ++ enrollment.users))
+    |> Repo.update!()
+  end
+
+  def unassign_users_from_enrollment!(enrollment, users) do
+    enrollment = Repo.preload(enrollment, :users)
+
+    enrollment
+    |> change()
+    |> put_assoc(:users, Enum.filter(enrollment.users, &(&1 not in users)))
     |> Repo.update!()
   end
 
@@ -92,14 +113,13 @@ defmodule PlanPicker.Enrollment do
     Repo.all(PlanPicker.Enrollment)
   end
 
-  def update_enrollment(enrollment_id, enrollment_params) do
-    PlanPicker.Enrollment
-    |> Repo.get!(enrollment_id)
+  def update_enrollment!(enrollment, enrollment_params) do
+    enrollment
     |> Enrollment.changeset(enrollment_params)
     |> Repo.update!()
   end
 
-  def delete_enrollment(enrollment_id) do
+  def delete_enrollment!(enrollment_id) do
     Enrollment
     |> Repo.get!(enrollment_id)
     |> Repo.delete!()

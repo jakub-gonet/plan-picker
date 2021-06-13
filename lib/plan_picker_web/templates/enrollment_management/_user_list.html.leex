@@ -1,0 +1,16 @@
+<table class="table is-striped is-hoverable is-fullwidth">
+    <thead>
+        <tr>
+            <th> <%= @prompt %> </th>
+        </tr>
+    </thead>
+    <tbody>
+        <%= for user <- @users do %>
+            <tr>
+                <td class="<%= if selected?(@selected_users, user) do "is-selected" end %>" phx-click="toggle_user" phx-value-id="<%= user.id %>">
+                    <%= user.name %> <%= user.last_name %>, <%= user.index_no %>
+                </td>
+            </tr>
+        <% end %>
+    </tbody>
+</table>
