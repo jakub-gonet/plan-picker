@@ -71,6 +71,7 @@ defmodule PlanPickerWeb do
       import Phoenix.LiveView.Helpers
 
       import PlanPickerWeb.ErrorHelpers
+      import PlanPickerWeb.RoleHelpers
       import PlanPickerWeb.Gettext
       import PlanPickerWeb.UserAuth, only: [current_user: 1, authenticated?: 1]
       alias PlanPickerWeb.Router.Helpers, as: Routes
