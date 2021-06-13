@@ -1,6 +1,6 @@
 <h1 class="title"> Edit <%= @enrollment.name %> </h1>
 <div class="columns">
-    <div class="column is-one-fifth">
+    <div class="column is-one-quarter">
         <%= f = form_for @changeset, "#", [phx_change: :validate, phx_submit: :submit] %>
             <%= if @changeset.action do %>
                 <div class="alert alert-danger">
@@ -28,7 +28,7 @@
         </form>
     </div>
 
-    <div class="columns column is-two-fifths">
+    <div class="columns column">
         <div class="column">
             <button class="button is-primary is-fullwidth" phx-click="assign_users">
                 Assign users &rarr;
