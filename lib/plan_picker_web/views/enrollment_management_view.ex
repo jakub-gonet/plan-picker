@@ -8,4 +8,8 @@ defmodule PlanPickerWeb.EnrollmentManagementView do
   end
 
   def is_admin?(conn), do: user_has_role?(conn, :admin)
+
+  def selected?(selected, el) do
+    Enum.member?(selected, el)
+  end
 end
