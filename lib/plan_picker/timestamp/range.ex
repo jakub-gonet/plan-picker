@@ -1,6 +1,8 @@
 defmodule Timestamp.Range do
   use Ecto.Type
 
+  alias Phoenix.HTML
+
   @year 1996
   @month 1
   @day 1
@@ -75,6 +77,21 @@ defmodule Timestamp.Range do
   end
 
   def dump(_), do: :error
+
+  def to_human_readable_iodata(%Timestamp.Range{} = range) do
+    # TODO - handle multiple days & timezones
+    %{start: %{hour: h_s, minute: m_s}, end: %{hour: h_e, minute: m_e}} = range
+
+    HTML.Safe.to_iodata([
+      to_string(h_s),
+      ":",
+      to_string(m_s),
+      " - ",
+      to_string(h_e),
+      ":",
+      to_string(m_e)
+    ])
+  end
 end
 
 defimpl Inspect, for: Timestamp.Range do

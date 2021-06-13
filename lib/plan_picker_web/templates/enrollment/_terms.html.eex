@@ -1,10 +1,8 @@
-<ul>
 <%= for term <- @terms do %>
-  <%= term.name %>
-  <%= term.type %>
-  <%= term.group_number %>
-  <%= term.week_type %>
-  <%= term.teacher.name %> <%= term.teacher.surname %>
-  <%= term.location %>
+  <div class="box content is-size-6">
+  <p class="mb-0"><strong><%= term.name %></strong> <%= term.type %><%= prefix_if_not_empty(term.group_number, ", ") %><%= term |> display_week_type() |> prefix_if_not_empty(" - ") %></p>
+  <p class="mb-0"><%= Timestamp.Range.to_human_readable_iodata(term.interval) %></p>
+  <p><%= term.location %></p>
+  <span><%= term.teacher.name %> <%= term.teacher.surname %></span>
+  </div>
 <% end %>
-</ul>
