@@ -2,6 +2,7 @@
 <h2 class="subtitle"> <%= @enrollment.state %> </h2>
 
 <div class="block">
+    <%= button "Manage classes", to: Routes.class_management_path(@conn, :classes, @enrollment.id), method: :get, class: "button is-link" %>
     <%= button "Edit enrollment", to: Routes.enrollment_management_path(@conn, :edit, @enrollment.id), method: :get, class: "button is-link" %>
     <%= if is_admin?(@conn) do %>
         <%= button "Delete enrollment", to: Routes.enrollment_management_path(@conn, :delete, @enrollment.id), method: :delete, class: "button is-danger" %>
