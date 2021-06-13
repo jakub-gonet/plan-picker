@@ -21,7 +21,7 @@ defmodule PlanPickerWeb.ClassManagementLive do
 
     roles = Role.get_roles_for(user)
 
-    if Enum.member?(enrollment.users, user) || Enum.member?(roles, :admin) do
+    if Enum.member?(enrollment.users, user) || :admin in roles do
       subject = get_first_subject(enrollment)
 
       socket =
