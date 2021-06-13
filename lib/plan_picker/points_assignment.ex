@@ -1,4 +1,4 @@
-defmodule PlanPicker.PointsAssigment do
+defmodule PlanPicker.PointsAssignment do
   use PlanPicker.Schema
   import Ecto.Changeset
 

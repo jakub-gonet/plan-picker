@@ -10,7 +10,7 @@ defmodule PlanPicker.Class do
     belongs_to :subject, PlanPicker.Subject
 
     many_to_many :users, PlanPicker.Accounts.User, join_through: "classes_users"
-    has_many :points_assignments, PlanPicker.PointsAssigment
+    has_many :points_assignments, PlanPicker.PointsAssignment
     has_many :terms, PlanPicker.Term
 
     timestamps()
