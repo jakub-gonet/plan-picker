@@ -19,7 +19,7 @@ defmodule PlanPicker.PointAssignmentLive do
 
     socket =
       socket
-      |> assign(:user_id, current_user.id)
+      |> assign(:user, current_user)
       |> assign(:term_id, term_id)
       |> assign(:assigned_points, Class.get_points(term.class, current_user) || 0)
 
@@ -27,22 +27,21 @@ defmodule PlanPicker.PointAssignmentLive do
   end
 
   def handle_event("add_points", _value, socket) do
-    %{term_id: term_id, user_id: user_id, assigned_points: points} = Map.get(socket, :assigns)
-    new_points = update_points(term_id, user_id, points, points + 1)
+    %{term_id: term_id, user: user, assigned_points: points} = Map.get(socket, :assigns)
+    new_points = update_points(term_id, user, points, points + 1)
     {:noreply, assign(socket, :assigned_points, new_points)}
   end
 
   def handle_event("remove_points", _value, socket) do
-    %{term_id: term_id, user_id: user_id, assigned_points: points} = Map.get(socket, :assigns)
-    new_points = update_points(term_id, user_id, points, points - 1)
+    %{term_id: term_id, user: user, assigned_points: points} = Map.get(socket, :assigns)
+    new_points = update_points(term_id, user, points, points - 1)
     {:noreply, assign(socket, :assigned_points, new_points)}
   end
 
-  defp update_points(term_id, user_id, old_points, new_points) do
+  defp update_points(term_id, user, old_points, new_points) do
     new_points = clamp_assigned_points(old_points, new_points)
 
     class = Term.get_term!(term_id, preload: [:class]).class
-    user = Accounts.get_user!(user_id)
 
     Class.assign_points!(class, user, new_points)
     new_points
