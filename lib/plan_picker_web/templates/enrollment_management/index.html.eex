@@ -1,6 +1,6 @@
-<h1> Enrollments </h1>
+<h1 class="title"> Enrollments </h1>
 <%= if is_admin?(@conn) do %>
-    <div>
+    <div class="block">
         <%= button "Add new", to: Routes.enrollment_management_path(@conn, :new), method: :get, class: "is-link button" %>
     </div>
 <% end %>
