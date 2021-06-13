@@ -1,4 +1,4 @@
-<h1> Your enrollments </h1>
+<h1> Enrollments </h1>
 
 <ol>
     <%= for enrollment <- @enrollments do %>
