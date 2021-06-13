@@ -4,7 +4,7 @@
 
 .term-points-progress {
   height: 3px;
-  width: 100%;
+  transition: width 0.2s cubic-bezier(0.4, 0, 1, 1);
 }
 
 @mixin term-overlay-common {
