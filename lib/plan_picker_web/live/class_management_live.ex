@@ -1,6 +1,6 @@
 defmodule PlanPickerWeb.ClassManagementLive do
   use PlanPickerWeb, :live_view
-  alias PlanPicker.{Accounts, Class, Enrollment, Subject}
+  alias PlanPicker.{Accounts, Class, Enrollment, Role, Subject}
 
   def selected?(selected, el) when is_list(selected) do
     Enum.member?(selected, el)
@@ -14,18 +14,33 @@ defmodule PlanPickerWeb.ClassManagementLive do
     selected == el
   end
 
-  def mount(%{"id" => enrollment_id}, _session, socket) do
+  def mount(%{"id" => enrollment_id}, %{"user_token" => token} = _session, socket) do
     enrollment = Enrollment.get_enrollment!(enrollment_id)
-    subject = get_first_subject(enrollment)
 
-    socket =
-      socket
-      |> assign(:enrollment, enrollment)
-      |> assign(:selected_subject, subject)
-      |> assign(:selected_class, nil)
-      |> assign(:selected_users, [])
+    user = Accounts.get_user_by_session_token(token)
 
-    {:ok, socket}
+    roles = Role.get_roles_for(user)
+
+    case {Enum.member?(enrollment.users, user), Enum.member?(roles, :admin)} do
+      {false, false} ->
+        socket = socket
+        |> put_flash(:error, "You do not have required permissions to view this enrollment.")
+        |> redirect(to: Routes.enrollment_management_path(socket, :index))
+
+        {:ok, socket}
+
+      {_, _} ->
+        subject = get_first_subject(enrollment)
+
+        socket =
+          socket
+          |> assign(:enrollment, enrollment)
+          |> assign(:selected_subject, subject)
+          |> assign(:selected_class, nil)
+          |> assign(:selected_users, [])
+
+        {:ok, socket}
+    end
   end
 
   def handle_event("toggle_user", %{"id" => user_id}, socket) do
