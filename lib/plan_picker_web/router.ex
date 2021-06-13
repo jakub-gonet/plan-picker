@@ -79,7 +79,7 @@ defmodule PlanPickerWeb.Router do
 
   scope "/", PlanPickerWeb do
     pipe_through [:browser, :require_authenticated_user_having_data]
-    get "/enrollments/:id/show", EnrollmentController, :show
+    live "/enrollments/:id/show", EnrollmentLive, :show
   end
 
   # moderator or admin routes

@@ -1,0 +1,22 @@
+<div class="columns">
+    <div class="column">
+        <h4 class="title">Monday</h4>
+        <%= render("_terms.html", socket: @socket, terms: terms_for_day(@terms, :monday)) %>
+    </div>
+    <div class="column">
+        <h4 class="title">Tuesday</h4>
+        <%= render("_terms.html", socket: @socket, terms: terms_for_day(@terms, :tuesday)) %>
+    </div>
+    <div class="column">
+        <h4 class="title">Wednesday</h4>
+        <%= render("_terms.html", socket: @socket, terms: terms_for_day(@terms, :wednesday)) %>
+    </div>
+    <div class="column">
+        <h4 class="title">Thursday</h4>
+        <%= render("_terms.html", socket: @socket, terms: terms_for_day(@terms, :thursday)) %>
+    </div>
+    <div class="column">
+        <h4 class="title">Friday</h4>
+        <%= render("_terms.html", socket: @socket, terms: terms_for_day(@terms, :friday)) %>
+  </div>
+</div>

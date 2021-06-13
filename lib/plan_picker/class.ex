@@ -63,7 +63,7 @@ defmodule PlanPicker.Class do
 
   def get_points(class, user) do
     case Repo.get_by(PointsAssignment, class_id: class.id, user_id: user.id) do
-      nil -> nil
+      nil -> 0
       points_assignment -> points_assignment.points
     end
   end

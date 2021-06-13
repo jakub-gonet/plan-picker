@@ -1,6 +1,6 @@
 <%= for term <- @terms do %>
   <div class="term-overlay mb-3">
-    <%= live_render(@conn, PlanPicker.PointAssignmentLive, session: %{"term_id" => term.id}) %>
+    <%= render("points_assignments.html", socket: @socket, term: term) %>
     <div class="box content is-size-6">
       <p class="mb-0">
         <strong><%= term.name %></strong> <%= term.type %><%= prefix_if_not_empty(term.group_number, ", ") %><%= term |> display_week_type() |> prefix_if_not_empty(" - ") %>

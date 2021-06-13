@@ -1,3 +1,3 @@
-<div style="width: <%= get_width_perc(@assigned_points) %>%;" class="term-points-progress has-background-primary"></div>
-<div class="term-overlay-left" phx-click="remove_points"></div>
-<div class="term-overlay-right" phx-click="add_points"></div>
+<div style="width: <%= get_width_perc(@term.assigned_points) %>%;" class="term-points-progress has-background-primary"></div>
+<div class="term-overlay-left" phx-click="remove_points" phx-value-id="<%= @term.id %>"></div>
+<div class="term-overlay-right" phx-click="add_points" phx-value-id="<%= @term.id %>"></div>

@@ -1,5 +1,6 @@
 defmodule PlanPickerWeb.EnrollmentView do
   use PlanPickerWeb, :view
+  alias PlanPickerWeb.EnrollmentLive
 
   def terms_for_day(terms, day) do
     terms
@@ -10,7 +11,7 @@ defmodule PlanPickerWeb.EnrollmentView do
   def get_width_perc(0), do: 0
 
   def get_width_perc(points) when points > 0,
-    do: trunc(100 * points / PlanPicker.PointAssignmentLive.max_points())
+    do: trunc(100 * points / EnrollmentLive.max_points())
 
   def display_week_type(%{week_type: nil}), do: nil
   def display_week_type(%{week_type: type}), do: "Week #{type}"
