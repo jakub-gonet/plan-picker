@@ -88,8 +88,7 @@ defmodule PlanPickerWeb.Router do
 
     get "/enrollments/", EnrollmentManagementController, :index
     get "/enrollments/:id/show", EnrollmentManagementController, :show
-    get "/enrollments/:id/edit", EnrollmentManagementController, :edit
-    put "/enrollments/", EnrollmentManagementController, :update
+    live "/enrollments/:id/edit", EnrollmentManagementLive, :edit
 
     live "/enrollments/:id/classes", ClassManagementLive
   end

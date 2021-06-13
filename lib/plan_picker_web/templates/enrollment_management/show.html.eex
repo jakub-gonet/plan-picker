@@ -1,1 +1,29 @@
-Enrollment view (admin)
+<h1 class="title"> <%= @enrollment.name %> </h1>
+<h2 class="subtitle"> <%= @enrollment.state %> </h2>
+
+<div class="block">
+    <%= button "Edit enrollment", to: Routes.enrollment_management_path(@conn, :edit, @enrollment.id), method: :get, class: "button is-link" %>
+    <%= if is_admin?(@conn) do %>
+        <%= button "Delete enrollment", to: Routes.enrollment_management_path(@conn, :delete, @enrollment.id), method: :delete, class: "button is-danger" %>
+    <% end %>
+</div>
+
+<div class="content columns">
+    <div class="column">
+        <h3> Assigned users </h3>
+        <%= for user <- @enrollment.users do %>
+            <div>
+                <%= user.name %> <%= user.last_name %>, <%= user.index_no %>
+            </div>
+        <% end %>
+    </div>
+
+    <div class="column">
+        <h3> Subjects </h3>
+        <%= for subject <- @enrollment.subjects do %>
+            <div>
+                <%= subject.name %>
+            </div>
+        <% end %>
+    </div>
+</div>
