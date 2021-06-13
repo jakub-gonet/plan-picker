@@ -1,23 +1,29 @@
 defmodule PlanPicker.Term do
   use PlanPicker.Schema
   import Ecto.Changeset
-  alias PlanPicker.Repo
+  alias PlanPicker.{Class, Repo, Term}
 
   schema "terms" do
     field :raw_interval, :map, virtual: true
     field :interval, Timestamp.Range
     field :location, :string
     field :week_type, :string
-    belongs_to :class, PlanPicker.Class
+    belongs_to :class, Class
 
     timestamps()
   end
 
   def create_term!(term_attrs, class) do
-    %PlanPicker.Term{}
+    %Term{}
     |> changeset(term_attrs)
     |> put_assoc(:class, class)
     |> Repo.insert!()
+  end
+
+  def get_term!(term_id, opts \\ [preload: [class: [:points_assignments]]]) do
+    Term
+    |> Repo.get!(term_id)
+    |> Repo.preload(opts[:preload])
   end
 
   @doc false
