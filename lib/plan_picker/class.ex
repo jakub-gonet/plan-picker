@@ -36,11 +36,9 @@ defmodule PlanPicker.Class do
   def assign_users_to_class!(class, users) do
     class = Repo.preload(class, :users)
 
-    users = Enum.filter(users, &(!Enum.member?(class.users, &1)))
-
     class
     |> change()
-    |> put_assoc(:users, users ++ class.users)
+    |> put_assoc(:users, Enum.uniq(users ++ class.users))
     |> Repo.update!()
   end
 
