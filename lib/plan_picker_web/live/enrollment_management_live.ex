@@ -1,26 +1,42 @@
 defmodule PlanPickerWeb.EnrollmentManagementLive do
   use PlanPickerWeb, :live_view
+  import Ecto.Changeset, only: [change: 1]
+  alias PlanPicker.{Accounts, Enrollment, Role}
 
   def render(assigns) do
     Phoenix.View.render(PlanPickerWeb.EnrollmentManagementView, "edit.html", assigns)
   end
 
-  def mount(%{"id" => enrollment_id}, _opts, socket) do
-    enrollment = PlanPicker.Enrollment.get_enrollment!(enrollment_id)
-    changeset = Ecto.Changeset.change(enrollment)
+  def mount(%{"id" => enrollment_id}, %{"user_token" => token} = _session, socket) do
+    enrollment = Enrollment.get_enrollment!(enrollment_id)
 
-    socket =
-      socket
-      |> assign(:enrollment, enrollment)
-      |> assign(:changeset, changeset)
-      |> assign(:state_options, PlanPicker.Enrollment.state_options())
-      |> assign(:selected_users, [])
-      |> assign(
-        :available_users,
-        Enum.filter(PlanPicker.Accounts.get_all_users(), &(!Enum.member?(enrollment.users, &1)))
-      )
+    user = Accounts.get_user_by_session_token(token)
 
-    {:ok, socket}
+    roles = Role.get_roles_for(user)
+
+    if Enum.member?(enrollment.users, user) || Enum.member?(roles, :admin) do
+      changeset = change(enrollment)
+
+      socket =
+        socket
+        |> assign(:enrollment, enrollment)
+        |> assign(:changeset, changeset)
+        |> assign(:state_options, PlanPicker.Enrollment.state_options())
+        |> assign(:selected_users, [])
+        |> assign(
+          :available_users,
+          Enum.filter(PlanPicker.Accounts.get_all_users(), &(!Enum.member?(enrollment.users, &1)))
+        )
+
+      {:ok, socket}
+    else
+      socket =
+        socket
+        |> put_flash(:error, "You do not have the required permissions to edit this enrollment.")
+        |> redirect(to: Routes.enrollment_management_path(socket, :index))
+
+      {:ok, socket}
+    end
   end
 
   def handle_event("validate", %{"enrollment" => _enrollment_params}, socket) do
@@ -30,12 +46,12 @@ defmodule PlanPickerWeb.EnrollmentManagementLive do
 
   def handle_event("submit", %{"enrollment" => enrollment_params}, socket) do
     new_enrollment =
-      PlanPicker.Enrollment.update_enrollment(
+      Enrollment.update_enrollment(
         socket.assigns[:enrollment].id,
         enrollment_params
       )
 
-    changeset = Ecto.Changeset.change(new_enrollment)
+    changeset = change(new_enrollment)
 
     socket =
       socket
@@ -47,7 +63,7 @@ defmodule PlanPickerWeb.EnrollmentManagementLive do
   end
 
   def handle_event("toggle_user", %{"id" => user_id}, socket) do
-    user = PlanPicker.Accounts.get_user!(user_id)
+    user = Accounts.get_user!(user_id)
 
     selected_users = socket.assigns[:selected_users]
 
@@ -60,7 +76,7 @@ defmodule PlanPickerWeb.EnrollmentManagementLive do
 
   def handle_event("assign_users", _opts, socket) do
     new_enrollment =
-      PlanPicker.Enrollment.assign_users_to_enrollment!(
+      Enrollment.assign_users_to_enrollment!(
         socket.assigns[:enrollment],
         socket.assigns[:selected_users]
       )
@@ -68,12 +84,12 @@ defmodule PlanPickerWeb.EnrollmentManagementLive do
     socket =
       socket
       |> assign(:enrollment, new_enrollment)
-      |> assign(:changeset, Ecto.Changeset.change(new_enrollment))
+      |> assign(:changeset, change(new_enrollment))
       |> assign(:selected_users, [])
       |> assign(
         :available_users,
         Enum.filter(
-          PlanPicker.Accounts.get_all_users(),
+          Accounts.get_all_users(),
           &(!Enum.member?(new_enrollment.users, &1))
         )
       )
@@ -83,7 +99,7 @@ defmodule PlanPickerWeb.EnrollmentManagementLive do
 
   def handle_event("unassign_users", _opts, socket) do
     new_enrollment =
-      PlanPicker.Enrollment.unassign_users_from_enrollment!(
+      Enrollment.unassign_users_from_enrollment!(
         socket.assigns[:enrollment],
         socket.assigns[:selected_users]
       )
@@ -91,12 +107,12 @@ defmodule PlanPickerWeb.EnrollmentManagementLive do
     socket =
       socket
       |> assign(:enrollment, new_enrollment)
-      |> assign(:changeset, Ecto.Changeset.change(new_enrollment))
+      |> assign(:changeset, change(new_enrollment))
       |> assign(:selected_users, [])
       |> assign(
         :available_users,
         Enum.filter(
-          PlanPicker.Accounts.get_all_users(),
+          Accounts.get_all_users(),
           &(!Enum.member?(new_enrollment.users, &1))
         )
       )
