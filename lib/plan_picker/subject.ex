@@ -20,6 +20,12 @@ defmodule PlanPicker.Subject do
     |> Repo.insert!()
   end
 
+  def get_subject!(subject_id, opts \\ [preload: [classes: [:teacher, :users, :terms]]]) do
+    PlanPicker.Subject
+    |> Repo.get!(subject_id)
+    |> Repo.preload(opts[:preload])
+  end
+
   @doc false
   def changeset(subject, attrs) do
     subject
