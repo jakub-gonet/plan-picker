@@ -1,26 +1,27 @@
 defmodule PlanPicker.Class do
   use PlanPicker.Schema
   import Ecto.Changeset
-  alias PlanPicker.{Repo, Subject, Teacher}
+  import Ecto.Query, only: [from: 2]
+  alias PlanPicker.{Accounts, Class, ClassUser, Repo, Subject, PointsAssignment, Teacher, Term}
 
   schema "classes" do
     field :type, :string
     field :group_number, :integer
-    belongs_to :teacher, PlanPicker.Teacher
-    belongs_to :subject, PlanPicker.Subject
+    belongs_to :teacher, Teacher
+    belongs_to :subject, Subject
 
-    many_to_many :users, PlanPicker.Accounts.User,
-      join_through: PlanPicker.ClassUser,
+    many_to_many :users, Accounts.User,
+      join_through: ClassUser,
       on_replace: :delete
 
-    has_many :points_assignments, PlanPicker.PointsAssigment
-    has_many :terms, PlanPicker.Term
+    has_many :points_assignments, PointsAssignment
+    has_many :terms, Term
 
     timestamps()
   end
 
   def create_class!(class_attrs, %Subject{} = subject, %Teacher{} = teacher) do
-    %PlanPicker.Class{}
+    %Class{}
     |> changeset(class_attrs)
     |> put_assoc(:subject, subject)
     |> put_assoc(:teacher, teacher)
@@ -49,6 +50,22 @@ defmodule PlanPicker.Class do
     |> change()
     |> put_assoc(:users, List.delete(class.users, user))
     |> Repo.update!()
+  end
+
+  def assign_points!(class, user, points) do
+    case Repo.get_by(PointsAssignment, class_id: class.id, user_id: user.id) do
+      nil -> %PointsAssignment{class_id: class.id, user_id: user.id}
+      points_assignment -> points_assignment
+    end
+    |> PointsAssignment.changeset(%{points: points})
+    |> Repo.insert_or_update!()
+  end
+
+  def get_points(class, user) do
+    case Repo.get_by(PointsAssignment, class_id: class.id, user_id: user.id) do
+      nil -> nil
+      points_assignment -> points_assignment.points
+    end
   end
 
   @doc false

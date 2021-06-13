@@ -1,6 +1,7 @@
 defmodule PlanPicker.Accounts.User do
   use PlanPicker.Schema
   import Ecto.Changeset
+  alias PlanPicker.{Class, ClassUser, PointsAssignment, Role}
 
   @derive {Inspect, except: [:password]}
   schema "users" do
@@ -13,13 +14,12 @@ defmodule PlanPicker.Accounts.User do
     field :last_name, :string
     field :name, :string
 
-    has_many :role, PlanPicker.Role
-    has_many :points_assignments, PlanPicker.PointsAssigment
+    has_many :role, Role
+    has_many :points_assignments, PointsAssignment
 
-    many_to_many(:classes, PlanPicker.Class,
-      join_through: PlanPicker.ClassUser,
+    many_to_many :classes, Class,
+      join_through: ClassUser,
       on_replace: :delete
-    )
 
     timestamps()
   end
