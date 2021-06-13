@@ -2,17 +2,10 @@ defmodule PlanPickerWeb.ClassManagementLive do
   use PlanPickerWeb, :live_view
   alias PlanPicker.{Accounts, Class, Enrollment, Role, Subject}
 
-  def selected?(selected, el) when is_list(selected) do
-    Enum.member?(selected, el)
-  end
+  def selected?(selected, el) when is_list(selected), do: el in selected
 
-  def selected?(nil, _) do
-    false
-  end
-
-  def selected?(selected, el) do
-    selected == el
-  end
+  def selected?(nil, _), do: false
+  def selected?(selected, el), do: selected == el
 
   def mount(%{"id" => enrollment_id}, %{"user_token" => token} = _session, socket) do
     enrollment = Enrollment.get_enrollment!(enrollment_id)
@@ -21,25 +14,22 @@ defmodule PlanPickerWeb.ClassManagementLive do
 
     roles = Role.get_roles_for(user)
 
-    if Enum.member?(enrollment.users, user) || :admin in roles do
-      subject = get_first_subject(enrollment)
+    socket =
+      if user in enrollment.users || :admin in roles do
+        subject = get_first_subject(enrollment)
 
-      socket =
         socket
         |> assign(:enrollment, enrollment)
         |> assign(:selected_subject, subject)
         |> assign(:selected_class, nil)
         |> assign(:selected_users, [])
-
-      {:ok, socket}
-    else
-      socket =
+      else
         socket
         |> put_flash(:error, "You do not have required permissions to view this enrollment.")
         |> redirect(to: Routes.enrollment_management_path(socket, :index))
+      end
 
-      {:ok, socket}
-    end
+    {:ok, socket}
   end
 
   def handle_event("toggle_user", %{"id" => user_id}, socket) do
@@ -47,7 +37,7 @@ defmodule PlanPickerWeb.ClassManagementLive do
 
     selected_users = socket.assigns[:selected_users]
 
-    if Enum.member?(selected_users, user) do
+    if user in selected_users do
       {:noreply, assign(socket, :selected_users, List.delete(selected_users, user))}
     else
       {:noreply, assign(socket, :selected_users, [user | selected_users])}
@@ -77,7 +67,7 @@ defmodule PlanPickerWeb.ClassManagementLive do
           new_class = Class.get_class!(class_id)
 
           selected_users =
-            Enum.filter(socket.assigns[:selected_users], &(!Enum.member?(new_class.users, &1)))
+            Enum.filter(socket.assigns[:selected_users], &(&1 not in new_class.users))
 
           socket =
             socket
@@ -89,8 +79,7 @@ defmodule PlanPickerWeb.ClassManagementLive do
     else
       new_class = Class.get_class!(class_id)
 
-      selected_users =
-        Enum.filter(socket.assigns[:selected_users], &(!Enum.member?(new_class.users, &1)))
+      selected_users = Enum.filter(socket.assigns[:selected_users], &(&1 not in new_class.users))
 
       socket =
         socket
