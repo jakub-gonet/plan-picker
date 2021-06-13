@@ -21,25 +21,24 @@ defmodule PlanPickerWeb.ClassManagementLive do
 
     roles = Role.get_roles_for(user)
 
-    case {Enum.member?(enrollment.users, user), Enum.member?(roles, :admin)} do
-      {false, false} ->
-        socket = socket
+    if Enum.member?(enrollment.users, user) || Enum.member?(roles, :admin) do
+      subject = get_first_subject(enrollment)
+
+      socket =
+        socket
+        |> assign(:enrollment, enrollment)
+        |> assign(:selected_subject, subject)
+        |> assign(:selected_class, nil)
+        |> assign(:selected_users, [])
+
+      {:ok, socket}
+    else
+      socket =
+        socket
         |> put_flash(:error, "You do not have required permissions to view this enrollment.")
         |> redirect(to: Routes.enrollment_management_path(socket, :index))
 
-        {:ok, socket}
-
-      {_, _} ->
-        subject = get_first_subject(enrollment)
-
-        socket =
-          socket
-          |> assign(:enrollment, enrollment)
-          |> assign(:selected_subject, subject)
-          |> assign(:selected_class, nil)
-          |> assign(:selected_users, [])
-
-        {:ok, socket}
+      {:ok, socket}
     end
   end
 
