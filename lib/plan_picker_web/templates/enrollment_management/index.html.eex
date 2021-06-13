@@ -1,5 +1,9 @@
 <h1> Enrollments </h1>
-
+<%= if is_admin?(@conn) do %>
+    <div>
+        <%= button "Add new", to: Routes.enrollment_management_path(@conn, :new), method: :get, class: "is-link button" %>
+    </div>
+<% end %>
 <ol>
     <%= for enrollment <- @enrollments do %>
         <li> <%= link enrollment.name, to: Routes.enrollment_management_path(@conn, :show, enrollment.id) %> (<%= enrollment.state %>) </li>

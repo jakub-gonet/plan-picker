@@ -84,14 +84,13 @@ defmodule PlanPicker.Enrollment do
     Repo.all(PlanPicker.Enrollment)
   end
 
-  def update_enrollment(enrollment_id, enrollment_params) do
-    PlanPicker.Enrollment
-    |> Repo.get!(enrollment_id)
+  def update_enrollment!(enrollment, enrollment_params) do
+    enrollment
     |> Enrollment.changeset(enrollment_params)
     |> Repo.update!()
   end
 
-  def delete_enrollment(enrollment_id) do
+  def delete_enrollment!(enrollment_id) do
     Enrollment
     |> Repo.get!(enrollment_id)
     |> Repo.delete!()

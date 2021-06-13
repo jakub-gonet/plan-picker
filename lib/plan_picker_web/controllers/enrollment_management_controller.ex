@@ -35,29 +35,8 @@ defmodule PlanPickerWeb.EnrollmentManagementController do
     |> redirect(to: Routes.enrollment_management_path(conn, :show, enrollment.id))
   end
 
-  def edit(conn, %{"id" => enrollment_id}) do
-    changeset =
-      Enrollment.get_enrollment!(enrollment_id)
-      |> Ecto.Changeset.change()
-      |> Ecto.Changeset.cast(%{}, [:id])
-
-    render(conn, "edit.html",
-      changeset: changeset,
-      state_options: Enrollment.state_options(),
-      enrollment_id: enrollment_id
-    )
-  end
-
-  def update(conn, %{"enrollment" => enrollment_params, "id" => enrollment_id}) do
-    Enrollment.update_enrollment(enrollment_id, enrollment_params)
-
-    conn
-    |> put_flash(:info, "Enrollment updated")
-    |> redirect(to: Routes.enrollment_management_path(conn, :show, enrollment_id))
-  end
-
   def delete(conn, %{"id" => enrollment_id}) do
-    Enrollment.delete_enrollment(enrollment_id)
+    Enrollment.delete_enrollment!(enrollment_id)
 
     conn
     |> put_flash(:info, "Enrollment deleted.")

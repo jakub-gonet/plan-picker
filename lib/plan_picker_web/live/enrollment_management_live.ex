@@ -46,8 +46,8 @@ defmodule PlanPickerWeb.EnrollmentManagementLive do
 
   def handle_event("submit", %{"enrollment" => enrollment_params}, socket) do
     new_enrollment =
-      Enrollment.update_enrollment(
-        socket.assigns[:enrollment].id,
+      Enrollment.update_enrollment!(
+        socket.assigns[:enrollment],
         enrollment_params
       )
 
