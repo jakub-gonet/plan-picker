@@ -2,6 +2,11 @@
   position: relative;
 }
 
+.term-points-progress {
+  height: 3px;
+  width: 100%;
+}
+
 @mixin term-overlay-common {
   position: absolute;
   top: 0;
@@ -18,7 +23,7 @@
   }
 }
 
-.term-overlay > .term-overlay-left {
+.term-overlay .term-overlay-left {
   @include term-overlay-common;
   left: 0;
   &:hover {
@@ -29,7 +34,7 @@
   }
 }
 
-.term-overlay > .term-overlay-right {
+.term-overlay .term-overlay-right {
   @include term-overlay-common;
   right: 0;
 

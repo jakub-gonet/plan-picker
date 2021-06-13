@@ -1,9 +1,7 @@
 <%= for term <- @terms do %>
   <div class="term-overlay mb-3">
-    <div class="term-overlay-left"></div>
-    <div class="term-overlay-right"></div>
+    <%= live_render(@conn, PlanPicker.PointAssigmentLive, session: %{"term_id" => term.id}) %>
     <div class="box content is-size-6">
-      <div class="term-left"></div><div class="term-right"></div>
       <p class="mb-0">
         <strong><%= term.name %></strong> <%= term.type %><%= prefix_if_not_empty(term.group_number, ", ") %><%= term |> display_week_type() |> prefix_if_not_empty(" - ") %>
       </p>

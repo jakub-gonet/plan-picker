@@ -60,7 +60,7 @@ defmodule PlanPicker.Enrollment do
   def get_terms_for_enrollment(enrollment) do
     subjects_props = [:name]
     class_props = [:type, :group_number, :teacher]
-    terms_props = [:interval, :location, :week_type]
+    terms_props = [:id, :interval, :location, :week_type]
 
     enrollment
     |> Repo.preload(subjects: [classes: [:terms, :points_assignments, :teacher]])
