@@ -78,19 +78,49 @@ defmodule Timestamp.Range do
 
   def dump(_), do: :error
 
-  def to_human_readable_iodata(%Timestamp.Range{} = range) do
+  def to_human_readable_iodata(%Timestamp.Range{} = range, show_day \\ false) do
     # TODO - handle multiple days & timezones
-    %{start: %{hour: h_s, minute: m_s}, end: %{hour: h_e, minute: m_e}} = range
+    %{start: %{day: d_s, hour: h_s, minute: m_s}, end: %{hour: h_e, minute: m_e}} = range
 
-    HTML.Safe.to_iodata([
-      to_string(h_s),
-      ":",
-      to_string(m_s),
-      " - ",
-      to_string(h_e),
-      ":",
-      to_string(m_e)
-    ])
+    if show_day do
+      HTML.Safe.to_iodata([
+        String.capitalize(to_string(get_day_of_week(d_s))),
+        " ",
+        to_string(h_s),
+        ":",
+        String.pad_leading(to_string(m_s), 2, "0"),
+        " - ",
+        to_string(h_e),
+        ":",
+        String.pad_leading(to_string(m_e), 2, "0")
+      ])
+    else
+      HTML.Safe.to_iodata([
+        to_string(h_s),
+        ":",
+        String.pad_leading(to_string(m_s), 2, "0"),
+        " - ",
+        to_string(h_e),
+        ":",
+        String.pad_leading(to_string(m_e), 2, "0")
+      ])
+    end
+  end
+
+  defp get_day_of_week(day_num) do
+    case day_num do
+      1 -> :monday
+      2 -> :tuesday
+      3 -> :wednesday
+      4 -> :thursday
+      5 -> :friday
+      8 -> :monday
+      9 -> :tuesday
+      10 -> :wednesday
+      11 -> :thursday
+      12 -> :friday
+      _ -> nil
+    end
   end
 end
 

@@ -47,18 +47,22 @@
 
         <%= for class <- @selected_subject.classes do %>
             <div class="box" phx-click="select_class" phx-value-id="<%= class.id %>">
-                <h2 class="subtitle"> <%= class.teacher.name %> <%= class.teacher.surname %> <h2>
+                <h2 class="subtitle"> <%= class.teacher.name %> <%= class.teacher.surname %>, <%= class.type %> <h2>
 
                 <%= for {term,i} <- Enum.with_index(class.terms, 1) do %>
-                    <div class="is-size-6">Term <%= i %>: <%= Timestamp.Range.to_human_readable_iodata(term.interval) %> </div>
+                    <div class="is-size-6">Term <%= i %>: <%= Timestamp.Range.to_human_readable_iodata(term.interval, true) %> <%= term.week_type %> </div>
                 <% end %>
 
+                <div class="is-size-5 block"> <%= length(class.users) %> assigned to this group. </div>
+
                 <%= if selected?(@selected_class, class) do %>
-                    <%= if length(@selected_users) == 0 do %>
-                        <button class="button" disabled>Select at least one user</button>
-                    <% else %>
-                        <button class="button is-primary" phx-click="add_users_to_class">Add <%= length(@selected_users) %> user(s) to group</button>
-                    <% end %>
+                    <div class="block">
+                        <%= if length(@selected_users) == 0 do %>
+                            <button class="button" disabled>Select at least one user</button>
+                        <% else %>
+                            <button class="button is-primary" phx-click="add_users_to_class">Add <%= length(@selected_users) %> user(s) to group</button>
+                        <% end %>
+                    </div>
 
                     <table class="table is-fullwidth is-hoverable is-striped">
                         <tbody>
@@ -70,8 +74,6 @@
                             <% end %>
                         </tbody>
                     </table>
-                <% else %>
-                    <span class="is-size-5"> <%= length(class.users) %> assigned to this group. </span>
                 <% end %>
             </div>
         <% end %>
