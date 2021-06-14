@@ -7,6 +7,19 @@ defmodule Timestamp.Range do
   @month 1
   @day 1
 
+  @days_of_week %{
+    1 => :monday,
+    2 => :tuesday,
+    3 => :wednesday,
+    4 => :thursday,
+    5 => :friday,
+    8 => :monday,
+    9 => :tuesday,
+    10 => :wednesday,
+    11 => :thursday,
+    12 => :friday
+  }
+
   @default_opts [lower_inclusive: true, upper_inclusive: false]
   @enforce_keys [:start, :end]
   defstruct [:start, :end, opts: []]
@@ -78,19 +91,31 @@ defmodule Timestamp.Range do
 
   def dump(_), do: :error
 
-  def to_human_readable_iodata(%Timestamp.Range{} = range) do
+  def to_human_readable_iodata(%Timestamp.Range{} = range, show_day \\ false) do
     # TODO - handle multiple days & timezones
-    %{start: %{hour: h_s, minute: m_s}, end: %{hour: h_e, minute: m_e}} = range
+    %{start: %{day: d_s, hour: h_s, minute: m_s}, end: %{hour: h_e, minute: m_e}} = range
 
-    HTML.Safe.to_iodata([
+    data = [
       to_string(h_s),
       ":",
-      to_string(m_s),
+      String.pad_leading(to_string(m_s), 2, "0"),
       " - ",
       to_string(h_e),
       ":",
-      to_string(m_e)
-    ])
+      String.pad_leading(to_string(m_e), 2, "0")
+    ]
+
+    data =
+      if show_day do
+        [
+          String.capitalize(to_string(@days_of_week[d_s])),
+          " "
+        ] ++ data
+      else
+        data
+      end
+
+    HTML.Safe.to_iodata(data)
   end
 end
 
