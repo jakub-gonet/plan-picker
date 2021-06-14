@@ -7,6 +7,19 @@ defmodule Timestamp.Range do
   @month 1
   @day 1
 
+  @days_of_week %{
+    1 => :monday,
+    2 => :tuesday,
+    3 => :wednesday,
+    4 => :thursday,
+    5 => :friday,
+    8 => :monday,
+    9 => :tuesday,
+    10 => :wednesday,
+    11 => :thursday,
+    12 => :friday
+  }
+
   @default_opts [lower_inclusive: true, upper_inclusive: false]
   @enforce_keys [:start, :end]
   defstruct [:start, :end, opts: []]
@@ -95,7 +108,7 @@ defmodule Timestamp.Range do
     data =
       if show_day do
         [
-          String.capitalize(to_string(get_day_of_week(d_s))),
+          String.capitalize(to_string(@days_of_week[d_s])),
           " "
         ] ++ data
       else
@@ -103,22 +116,6 @@ defmodule Timestamp.Range do
       end
 
     HTML.Safe.to_iodata(data)
-  end
-
-  defp get_day_of_week(day_num) do
-    case day_num do
-      1 -> :monday
-      2 -> :tuesday
-      3 -> :wednesday
-      4 -> :thursday
-      5 -> :friday
-      8 -> :monday
-      9 -> :tuesday
-      10 -> :wednesday
-      11 -> :thursday
-      12 -> :friday
-      _ -> nil
-    end
   end
 end
 
