@@ -5,8 +5,8 @@
             There are no users assigned to this enrollment.
         <% end %>
 
-        <table class="table is-fullwidth is-hoverable is-striped">
-            <%= for user <- @enrollment.users do %>
+        <table class="table is-fullwidth is-hoverable is-striped is-size-5">
+            <%= for user <- sort_by_points(@enrollment.users, @points_assignments) do %>
                 <tr>
                     <%= if @selected_class && selected?(@selected_class.users, user) do %>
                         <td>
@@ -14,7 +14,8 @@
                         </td>
                     <% else %>
                         <td class="<%= if selected?(@selected_users, user) do "is-selected" end %>" phx-click="toggle_user" phx-value-id="<%= user.id %>">
-                            <%= user.name %> <%= user.last_name %>
+                            <div> <%= user.name %> <%= user.last_name %> </div>
+                            <div> <%= get_points(@selected_class, @points_assignments, user.id) %> </div>
                         </td>
                     <% end %>
                 <tr>
@@ -60,7 +61,7 @@
                         <button class="button is-primary" phx-click="add_users_to_class">Add <%= length(@selected_users) %> user(s) to group</button>
                     <% end %>
 
-                    <table class="table is-fullwidth is-hoverable is-striped">
+                    <table class="table is-fullwidth is-hoverable is-striped is-size-5">
                         <tbody>
                             <%= for user <- class.users do %>
                                 <tr class="content">

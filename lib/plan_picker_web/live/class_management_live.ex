@@ -7,6 +7,23 @@ defmodule PlanPickerWeb.ClassManagementLive do
   def selected?(nil, _), do: false
   def selected?(selected, el), do: selected == el
 
+  def get_points(selected_class, points_assignments, user_id) do
+    if selected_class == nil do
+      ""
+    else
+      case Map.get(points_assignments, user_id) do
+        nil -> "Assigned 0 points"
+        num -> ~E"Assigned <%= num %> points"
+      end
+    end
+  end
+
+  def sort_by_points(users, points_assignments) do
+    Enum.sort(users, fn a, b ->
+      points_assignments[b.id] == nil || points_assignments[a.id] >= points_assignments[b.id]
+    end)
+  end
+
   def mount(%{"id" => enrollment_id}, %{"user_token" => token} = _session, socket) do
     enrollment = Enrollment.get_enrollment!(enrollment_id)
 
@@ -23,6 +40,7 @@ defmodule PlanPickerWeb.ClassManagementLive do
         |> assign(:selected_subject, subject)
         |> assign(:selected_class, nil)
         |> assign(:selected_users, [])
+        |> assign(:points_assignments, %{})
       else
         socket
         |> put_flash(:error, "You do not have required permissions to view this enrollment.")
@@ -69,10 +87,16 @@ defmodule PlanPickerWeb.ClassManagementLive do
           selected_users =
             Enum.filter(socket.assigns[:selected_users], &(&1 not in new_class.users))
 
+          points_assignments =
+            socket.assigns[:enrollment].users
+            |> Enum.map(fn user -> {user.id, Class.get_points(new_class, user)} end)
+            |> Map.new()
+
           socket =
             socket
             |> assign(:selected_class, new_class)
             |> assign(:selected_users, selected_users)
+            |> assign(:points_assignments, points_assignments)
 
           {:noreply, socket}
       end
@@ -81,10 +105,16 @@ defmodule PlanPickerWeb.ClassManagementLive do
 
       selected_users = Enum.filter(socket.assigns[:selected_users], &(&1 not in new_class.users))
 
+      points_assignments =
+        socket.assigns[:enrollment].users
+        |> Enum.map(fn user -> {user.id, Class.get_points(new_class, user)} end)
+        |> Map.new()
+
       socket =
         socket
         |> assign(:selected_class, new_class)
         |> assign(:selected_users, selected_users)
+        |> assign(:points_assignments, points_assignments)
 
       {:noreply, socket}
     end
