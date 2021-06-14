@@ -79,34 +79,24 @@ defmodule PlanPicker.Enrollment do
   end
 
   def get_terms_for_enrollment(enrollment) do
-    subjects_props = [:name]
-    class_props = [:type, :group_number, :teacher]
-    terms_props = [:id, :interval, :location, :week_type]
+    query = from e in Enrollment,
+      join: subj in assoc(e, :subjects),
+      join: class in assoc(subj, :classes),
+      join: teacher in assoc(class, :teacher),
+      join: term in assoc(class, :terms),
+      where: e.id == ^enrollment.id,
+      select: %{
+        name: subj.name,
+        type: class.type,
+        group_number: class.group_number,
+        teacher: teacher,
+        id: term.id,
+        interval: term.interval,
+        location: term.location,
+        week_type: term.week_type
+      }
 
-    enrollment
-    |> Repo.preload(subjects: [classes: [:terms, :points_assignments, :teacher]])
-    |> Map.get(:subjects)
-    |> Enum.map(&flatten_association({&1, subjects_props}, {:classes, [:terms | class_props]}))
-    |> Enum.flat_map(
-      &flatten_association({&1, subjects_props ++ class_props}, {:terms, terms_props})
-    )
-  end
-
-  defp flatten_association({parent, parent_props}, {children_name, child_props}) do
-    merge_props = fn parent, child ->
-      child_properties = Map.take(child, child_props)
-
-      parent
-      |> Map.take(parent_props)
-      |> Map.merge(child_properties)
-    end
-
-    parent
-    |> List.wrap()
-    |> Enum.map(&{&1, Map.get(&1, children_name)})
-    |> Enum.flat_map(fn {parent, children} ->
-      Enum.map(children, &merge_props.(parent, &1))
-    end)
+    Repo.all(query)
   end
 
   def get_all_enrollments do
