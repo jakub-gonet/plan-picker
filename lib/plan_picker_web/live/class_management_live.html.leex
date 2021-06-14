@@ -26,7 +26,7 @@
         <div class="tabs is-toggle is-centered is-fullwidth">
             <ul>
                 <%= for subject <- @enrollment.subjects do %>
-                    <%= if selected?(@selected_subject.id, subject.id) do %>
+                    <%= if selected?(@selected_subject, subject) do %>
                         <li class="is-active">
                             <a> <%= subject.name %> </a>
                         </li>
