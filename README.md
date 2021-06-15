@@ -133,19 +133,23 @@ Ważniejsze pliki:
 ## Elixir
 
 Elixir jest językiem funkcyjnym, stworzonym na podstawie języka Erlang oraz inspirowany syntaxem Rubiego.
-Ma dzięki temu wiele dość przydatnych możliwości, przykładowo dość podstawowym mechanizmem jest pattern matching.
+Przyświeca mu idea "let it crash" - w przypadku nieprawidłowych danych proces obsługujący dane żądanie powinien zakończyć swoje działanie. W Erlangu zazwyczaj zapytania obsługuje wiele procesów (procesy w VM erlanga są bardzo lekkie i nie są procesami systemowymi), dlatego obsługa w ramach jednego procesu skutecznie izoluje je od siebie - crash jednego procesu nie ma wpływu na inne procesy.
 
 ### Typy danych
+
 Głównymi typami wartości są stringi (przechowywane binarnie w UTF-8) `" ą alamakota"`, liczby i atomy `:nazwa`. Atomy służą jako unikalne symbole (jest górna liczba liczby symboli dostępnych w VM erlanga), często w kluczach map i struktur, ale też w opcjach przesyłanych do funkcji. Elixir nie ma typu boolean, realizują go atomy `:true` i `:false`.
 Głównymi typami kolekcji w Elixirze są listy `[1,2,3]`, krotki `{1,2,3}`, mapy `%{}` i struktury `%NazwaStruktury{}`.
 
 ### Pattern matching
 
 Przypisanie wartość do zmiennej to strukturalne związanie wartości z nazwą. Nie widać tego przy zwykłych przypisaniach:
+
 ```elixir
 x = 5
 ```
+
 ale widać, gdy przypisujemy liczbę czy krotkę:
+
 ```elixir
 {x, y} = {1, 2}
 # x == 1
@@ -154,6 +158,7 @@ ale widać, gdy przypisujemy liczbę czy krotkę:
 # t == [1,3]
 # s == 5
 ```
+
 W drugim przykładzie próbujemy związać mapę, która w Elixirze ma syntax `%{klucz: wartość}`.
 Najpierw upewniamy się, że klucz `:a` ma wartość 1, potem destrukturyzujemy klucz `:b`, z którego wyciągamy krotkę dwóch zmiennych.
 
@@ -172,6 +177,23 @@ Najpierw upewniamy się, że klucz `:a` ma wartość 1, potem destrukturyzujemy 
 ```
 
 Funkcja `create/2` w `user_session_controller.ex` drugi argument dopasowuje do mapy z kluczem "user", a następnie dopasowaną wartość dopasowuje do mapy z emailem i hasłem. Warto zauważyć, że kluczami są tutaj stringi, ponieważ argument jest kontrolowany przez klientów. Użycie atomu byłoby błędem, ponieważ klient mógłby generować argumenty, które tworzyłyby nowe atomy i w którymś momencie przekroczylibyśmy maksymalną liczbę atomów oraz scrashowalibyśmy VM erlanga.
+
+```elixir
+  defp parse_weekday_lower("pn"), do: :monday
+  defp parse_weekday_lower("wt"), do: :tuesday
+  defp parse_weekday_lower("sr"), do: :wednesday
+  defp parse_weekday_lower("cz"), do: :thursday
+  defp parse_weekday_lower("pt"), do: :friday
+```
+
+Funkcja `parse_weekday_lower/1` w pliku `csv.ex` mapuje stringi, reprezentujące dni tygodnia na atomy. Pattern matching w funkcjach działa z góry do dołu, więc bardzo często się korzysta z tego mechanizmu do zastępowania ifów:
+
+```elixir
+  defp parse_group("", :lecture), do: nil
+  defp parse_group(group, _) when group != "", do: String.to_integer(group)
+```
+
+`parse_group/2` najpierw próbuje dopasować wzorzec do pustego stringa i atomu reprezentującego wykład, jezeli mu to się uda to zwraca specjalny atom `nil`, jeżeli nie, to próbuje dopasować każdy niepusty string i sparsować numer grupy. Wysokopoziomowo ta funkcja mapuje grupy wykładowe (które nie mają numeru) na nil, a w reszcie zamienia numer grupy ze stringu na liczbę. Warto zauważyć, że jeśli podalibyśmy jako argument np. `parse_group("", :laboratory)` to żadna z klauzul funkcji nie jest w stanie się dopasować i dostaniemy błąd dopasowania.
 
 ### Pipe operator
 
@@ -193,4 +215,3 @@ Kolejnym ważnym elementem Elixira jest operator `|>`. Pozwala na przekazanie wa
 Funkcja `show/2` z `enrollment_controller.ex` po wyciągnięciu `enrollment_id` przekazuje ją do funkcji `get_enrollment/1` z modułu `Enrollment`, który robi zapytanie do bazy danych, a następnie drugi wywołuje funkcję `get_terms_for_enrollment/1`, która robi zapytanie o terminy związane z zapisem i strukturyzuje dane w listę terminów z dodatkowymi informacjami nt nauczycieli czy grup.
 
 ## Phoenix
-
