@@ -314,6 +314,8 @@ Po kolei:
            )
    ```
 
+   Domyślnie każda tabela ma klucz `id`, który ma typ int. My zmieniliśmy to ustawienie używając UUID, ponieważ jest nieco bezpieczniejsze, zapobiegając atakom enumeracyjnym (iteracja po endpoincie REST: `/user/1`, `/user/2`, `/user/n`) oraz umożliwia używanie shardingu, dzieląc bazę na niezależne podczęści (UUID jest globalnie unikalnie, więc nie musimy synchronizować sekwencji).
+
 ### Model logiczny
 
 Ecto składa się z trzech głównych części:
