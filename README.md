@@ -421,4 +421,86 @@ Elixir ma konwencję, w której funkcje zakończone wykrzyknikiem rzucają wyją
 
 ## Phoenix
 
+Phoenix jest frameworkiem do budowy aplikacji webowych realizującym model MVC, został stworzony o doświadczenia z frameworkiem Rails.
+
+### Plugs
+
+Fundamentalnym elementem Phoenixa są plugi. Są to moduły lub funkcje, które realizują wspólny interfejs, dzięki czemu są łatwo komponowalne.
+Używa się ich głównie w routerze, tworząc pewną analogię do pipe'ów (`|>`). By funkcja działała jako plug, musi jako pierwszy argument przyjmować argument połączenia `conn` oraz opcje.
+
+W pliku `user_auth.ex` znajduje się parę plugów, które zajmują się autoryzacją ról:
+
+```
+def require_role(conn, role) do
+    if Role.has_role?(current_user(conn), role) do
+        conn
+    else
+        conn
+        |> put_flash(:error, "You do not have required permissions to view this page.")
+        |> redirect(to: Routes.user_session_path(conn, :new))
+        |> halt()
+    end
+end
+```
+
+Sprawdzamy czy aktualny użytkownik ma wymaganą rolę. Jeżeli tak, zwracamy `conn` bez zmian, jeżeli nie to przekierowujemy do strony umożliwiającej zalogowanie i zatrzymujemy cały pipeline. Aktualny użytkownik jest wybierany z `conn.assigns`, pozwalając na dzielonie stanu pomiędzy plugami.
+
+### Router
+
+`router.ex`
+
+Router używa paru podstawowych pipeline'ów składających się z listy plugów:
+
+```elixir
+pipeline :browser do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+    plug :fetch_current_user
+    plug :put_root_layout, {PlanPickerWeb.LayoutView, :root}
+end
+
+pipeline :require_authenticated_user_having_data do
+    plug :require_authenticated_user
+    plug :put_roles_if_authenticated
+end
+
+pipeline :require_moderator_role do
+    plug :require_authenticated_user_having_data
+    plug :require_role, :moderator
+end
+
+pipeline :require_admin_role do
+    plug :require_authenticated_user_having_data
+    plug :require_role, :admin
+end
+```
+
+`browser` zapewnia, że akceptujemy wyłącznie połączenia z nagłówkiem `Accept: text/html` (`plug accepts, ["html"]`), dostajemy dostęp do sesji, dodajemy obsługę liveview czy zabezpieczamy się przed różnymi typami ataków.
+
+`require_moderator_role` i `require_admin_role` sprawdzają czy zalogowany użytkownik posiada odpowiednią rolę, jest to wykorzystywane w routingu.
+
+Niżej znajdują się opisy ścieżek, które mapowane są do kontrolerów i kontrolerów liveView
+
+```elixir
+scope "/manage/", PlanPickerWeb do
+    pipe_through [:browser, :require_moderator_role]
+
+    get "/enrollments/", EnrollmentManagementController, :index
+    get "/enrollments/:id/show", EnrollmentManagementController, :show
+    live "/enrollments/:id/edit", EnrollmentManagementLive, :edit
+    live "/enrollments/:id/classes", ClassManagementLive, :classes
+end
+```
+
+`scope` to prefix ścieżki, a nazwa modułu jest prefiksem modułów wymienionych w ścieżkach. np. `get "/enrollments/", EnrollmentManagementController, :index` mapuje się na ścieżkę `/manage/enrollments` udostępnianej pod metodą GET i uruchamia funkcję `index/2` w module `PlanPickerWeb.EnrollmentManagementController`. W ścieżkach widać mapowanie parametrów HTML na argumenty przekazywane do zmapowanej funkcji `get "/enrollments/:id/show"` udostępni id w drugim argumencie jako mapie `%{"id" => numeryczne_id}`.
+
+### Kontroler
+
+### View i template
+
+Widoki i szablony są bardzo powiązanymi bytami: każdy szablon jest skompilowany do modułu widoku i jest zwracany jako wartość funkcji `render`, dlatego każdy kontroler musi być skojarzony z widokiem i każdy szablon, który może być renderowany musi być powiązany z widokiem. Tradycyjnie w module widoku definiuje się funkcje pomocnicze przydatne w szablonach: `enrollment_view.ex` ma funkcję `get_width_perc` liczącą długość linii pokazującej liczbę przydzielonych punktów w szablonie `points_assignments.html.leex`. Szablony umożliwiają dodawanie wyrażeń Elixira przez specjalny język tagów: `<%= >` renderuje wartość zwróconą w środku tagu, `<% >` tego nie robi. Przykładem jest plik `_terms.html.eex`.
+
 ## Phoenix Liveview
