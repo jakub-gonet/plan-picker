@@ -214,4 +214,209 @@ Kolejnym ważnym elementem Elixira jest operator `|>`. Pozwala na przekazanie wa
 
 Funkcja `show/2` z `enrollment_controller.ex` po wyciągnięciu `enrollment_id` przekazuje ją do funkcji `get_enrollment/1` z modułu `Enrollment`, który robi zapytanie do bazy danych, a następnie drugi wywołuje funkcję `get_terms_for_enrollment/1`, która robi zapytanie o terminy związane z zapisem i strukturyzuje dane w listę terminów z dodatkowymi informacjami nt nauczycieli czy grup.
 
+## Ecto
+
+Ecto jest biblioteką dostępu i generowania zapytań do danych. Nie jest ORMem - jest całkowicie agnostyczna co do tego gdzie przechowujemy dane czy w jaki sposób do nich się odwołujemy (oraz nie jest obiektowa :>).
+
+Bardzo często korzysta się z podbibliotek Ecto, które stanowią pomost pomiędzy DBMS, a Ecto (np Postgrex).
+
+Ecto w naszej aplikacji składa się z dwóch elementów:
+
+- modelowania fizycznej struktury bazy danych
+- dostępu do danych i zaprojektowania modelu logicznego
+
+### Struktura bazy danych i migracje
+
+Wszystkie migracje znajdują się w folderze `priv/repo/migrations`, szczególnie istotne są dwie pierwsze: `setup_db_extensions` oraz `add_initial_schema`. W pierwszym inicjalizujemy wtyczki do postgresa, citext oraz btree_gist, odpowiednio do typu `citext`, który dostarcza funkcjonalności varcharów, ale bez uwzględniania wielkości liter (używane do przechowywania maili) i do stworzenia indeksów na przedziały czasowe.
+
+`add_initial_schema` z kolei tworzy podstawową strukturę danych. Skupmy się na jednej migracji:
+
+```elixir
+defp add_terms do
+    create_query = "CREATE TYPE week_type AS ENUM ('A', 'B')"
+    drop_query = "DROP TYPE week_type"
+    execute(create_query, drop_query)
+
+    create table(:terms) do
+        add :interval, :tstzrange, null: false
+        add :location, :string
+        add :week_type, :week_type
+        add :class_id, references(:classes, on_delete: :delete_all)
+
+        timestamps()
+    end
+
+    create constraint("terms", :in_two_week_range,
+                check: "interval <@ '[1996-01-01 00:00, 1996-01-14 00:00]'"
+            )
+
+    create constraint("terms", :no_overlap_in_group,
+                exclude: "gist (class_id WITH =, interval WITH &&)"
+            )
+
+    create index(:terms, [:class_id])
+end
+```
+
+Po kolei:
+
+1. Dodanie enuma `week_type`
+
+   Definiujemy dwie komendy z PG, które tworzą i niszczą typ użytkownika, który jest zdefiniowany jako enum. W ten sposób ograniczamy wartość pola week_type do `"A", "B", null` co przekłada się na rodzaj tygodnia bądź oba tygodnie (null).
+
+   Potrzebujemy zdefinować tworzenie i niszczenie, by móc używać komendy `mix ecto.rollback`, która nie jest obowiązkowa, ale pozwala na cofanie się z aplikacją migracji.
+
+   ```elixir
+   create_query = "CREATE TYPE week_type AS ENUM ('A', 'B')"
+   drop_query = "DROP TYPE week_type"
+   execute(create_query, drop_query)
+   ```
+
+2. Stworzenie tabeli o nazwie `"terms"`, atom mapowany jest na string
+
+   ```elixir
+   create table(:terms) do
+   ```
+
+3. Dodanie interwału, który jest [typem interwałowym ze strefą czasową.](https://www.postgresql.org/docs/current/rangetypes.html).
+
+   W ten sposób modelujemy przedziały godzin, które są dokładniej opisane w kolejnej sekcji.
+
+   ```elixir
+   add :interval, :tstzrange, null: false
+   ```
+
+4. Dodanie asocjacji przez klucz obcy z klasą i użycie typu kaskady `DELETE ALL`
+
+   ```elixir
+   add :class_id, references(:classes, on_delete: :delete_all)
+   ```
+
+5. Dodanie pól `created_at`, `updated_at` przez makro `timestamps()`
+
+   Przydatne w sortowaniu po dacie stworzenia i podobnych zapytaniach.
+
+   ```elixir
+   timestamps()
+   ```
+
+6. Ograniczenia na interwały
+
+   Musimy zamodelować terminy, które zamykają się w dwóch tygodniach, dlatego użycie dat nie jest optymalnym rozwiązaniem. Interwały z PG pozwalają na zamknięcie dat w określonym przedziale (tutaj przyjęliśmy początek jako 1996-01-01, a koniec 1996-01-14 - pierwszy stycznia 1996 to był poniedziałek, więc łatwo mapuje się na dni tygodni) oraz na zabronienie przecinania się z innym przedziałem w obrębie tej samej grupy. **Jest to dość istotne ograniczenie, ponieważ zapobiega sytuacji, w której jedna grupa ma zajęcia jednocześnie albo się pokrywają, co jest niemożliwe do zrealizowania w rzeczywistości.** Tutaj używamy indeksu drzewiastego gist, który był omówiony wcześniej.
+
+   ```elixir
+   create constraint("terms", :in_two_week_range,
+               check: "interval <@ '[1996-01-01 00:00, 1996-01-14 00:00]'"
+           )
+
+   create constraint("terms", :no_overlap_in_group,
+               exclude: "gist (class_id WITH =, interval WITH &&)"
+           )
+   ```
+
+### Model logiczny
+
+Ecto składa się z trzech głównych części:
+
+- repozytorium
+- modeli
+- changesetów i dostępu do danych
+
+#### Repozytorium
+
+Repozytorium jest miejscem, które definiujemy jako źródło danych. U nas jest to Postgres, definicja znajduje się w pliku `repo.ex`
+
+#### Modele
+
+Modele reprezentują struktury, jakich używamy w aplikacji. Przykładowo w pliku `term.ex` widzimy taką definicję:
+
+```elixir
+schema "terms" do
+    field :raw_interval, :map, virtual: true
+    field :interval, Timestamp.Range
+    field :location, :string
+    field :week_type, :string
+    belongs_to :class, Class
+
+    timestamps()
+end
+```
+
+Widać wymienione wyżej pola, asocjację z klasą oraz dodatkowo pole wirtualne `:raw_interval`. Jest ono wykorzystywane do stworzenia pola interval i jest mapą `%{start: start_t, end: end_t, weekday: weekday}` reprezentującą czas rozpoczęcia i skończenia terminu oraz dzień tygodnia, w którym dany termin się odbywa. Plik `range.ex` zajmuje się mapowaniem tych informacji na typ w bazie danych w funkcji `from_time`, która wykorzystuje `new` i `dump` do serializacji i deserializacji interwałów.
+
+#### Changesety
+
+Changesety to struktury przechowujące zmiany, które chcemy zaaplikować na danym wierszu. Przykładowo w `term.ex` widzimy funkcję `changeset`:
+
+```elixir
+def changeset(term, attrs) do
+    term
+    |> cast(attrs, [
+        :location,
+        :week_type,
+        :raw_interval
+    ])
+    |> set_interval()
+    |> validate_required([:interval, :location])
+end
+```
+
+Funkcja ta najpierw używa funkcji `cast` do odfiltrowania interesujących nas pól - do `changeset` przekazujemy dowolną mapę, więc chcemy uniemożliwić przypadkową zmianę pola, którego nie chcemy zmienić w danym changesecie.
+Następnie używamy metody `set_interval`, która próbuje stworzyć nową strukturę `interval`. To, że udało się jej ją stworzyć sprawdzane jest w kolejnym kroku `validate_required`. Jeżeli changeset jest prawidłowy to ma pole `valid?` ustawione na `true`, jeżeli nie jest to ma `valid? == false` oraz listę błędów w `errors`.
+
+W pliku `user.ex` można zauważyć podział odpowiedzialności changesetów, istnieje tam `password_changeset`, `email_changeset` czy `registration_changeset`.
+
+#### Dostęp do danych
+
+Przykładem dostępu do danych i używania repozytorium jest plik `role.ex`.
+
+```elixir
+def has_role?(user, role_name) do
+    query =
+        from u in Accounts.User,
+        join: r in assoc(u, :role),
+        where: r.name == ^role_name and u.id == ^user.id
+
+    Repo.exists?(query)
+end
+```
+
+W `has_role?` definiujemy funkcję sprawdzającą czy dana struktura reprezentująca usera ma daną rolę.
+Najpierw tworzymy zapytanie w DSL Ecto, które wygląda bardzo analogicznie do zapytań SQL, a następnie używamy funkcji `Repo.exists?`, która zwraca prawdę jeżeli z wygenerowanego zapytania zostanie zwrócony co najmniej jeden wiersz.
+
+Jednym z elementów zapytania jest znak `^`: w zwykłym Elixirze gdy chcemy sprawdzić strukturalnie wartość zmiennej używamy go do zapobiegnięcia dowiązania zmiennej do nazwy:
+
+```elixir
+x = 5
+# 5
+x = 4 # zmienna x jest dopasowana do 4 przez zmianę dowiązania
+# 4
+
+^x = 3 # zmienna nie może się dopasować, ponieważ zabroniliśmy jej zmienić dowiązanie
+# ** (MatchError) no match of right hand side value: 3
+```
+
+W Ecto znak jest przeładowany i służy do poprawnego escape'owania wartości w zapytaniu by uniknąć ataków SQL injection. Brak użycia `^` kończy się błędem.
+
+Drugi przykład:
+
+```elixir
+def assign_role(user, role_name) do
+    if not has_role?(user, role_name) do
+        %Role{name: role_name}
+        |> Repo.preload(:user)
+        |> Ecto.Changeset.change()
+        |> Ecto.Changeset.put_assoc(:user, user)
+        |> Repo.insert!()
+    end
+end
+```
+
+`assign_role` przypisuje daną rolę do użytkownika.
+Najpierw sprawdzamy czy użytkownik nie posiada już danej roli, jeżeli nie, to tworzymy strukturę, która ją reprezentuje, tworzymy z niej changeset, tworzymy asocjację z podanym userem i próbujemy ją dodać do bazy.
+
+Elixir ma konwencję, w której funkcje zakończone wykrzyknikiem rzucają wyjątek przy niepoprawnym użyciu (tutaj gdy INSERT sie nie powiedzie), a funkcje bez wykrzyknika zwracają krotkę `{:ok, value}` bądź `{:error, reason}` pozwalając użyć dopasowania wzorca i wykonania innych funkcji. Widać to w `verify_change_email_token_query` w pliku `user_token.ex`
+
 ## Phoenix
+
+## Phoenix Liveview
