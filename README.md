@@ -127,3 +127,70 @@ Ważniejsze pliki:
 - `enrollments_users` - w zapisie brać udział mogą tylko studenci do niego przypisani, jeden student może przypisany do wielu zapisów
 - `classes_users` - do grupy dziekańskiej przypisywani są studenci, jeden student może przypisany do wielu grup dziekańskich
 - `points_assignments` - studenci mogą przyznawać grupom dziekańskim punkty priorytetu
+
+# Opis poszczególnych części projektu
+
+## Elixir
+
+Elixir jest językiem funkcyjnym, stworzonym na podstawie języka Erlang oraz inspirowany syntaxem Rubiego.
+Ma dzięki temu wiele dość przydatnych możliwości, przykładowo dość podstawowym mechanizmem jest pattern matching.
+
+### Typy danych
+Głównymi typami wartości są stringi (przechowywane binarnie w UTF-8) `" ą alamakota"`, liczby i atomy `:nazwa`. Atomy służą jako unikalne symbole (jest górna liczba liczby symboli dostępnych w VM erlanga), często w kluczach map i struktur, ale też w opcjach przesyłanych do funkcji. Elixir nie ma typu boolean, realizują go atomy `:true` i `:false`.
+Głównymi typami kolekcji w Elixirze są listy `[1,2,3]`, krotki `{1,2,3}`, mapy `%{}` i struktury `%NazwaStruktury{}`.
+
+### Pattern matching
+
+Przypisanie wartość do zmiennej to strukturalne związanie wartości z nazwą. Nie widać tego przy zwykłych przypisaniach:
+```elixir
+x = 5
+```
+ale widać, gdy przypisujemy liczbę czy krotkę:
+```elixir
+{x, y} = {1, 2}
+# x == 1
+# y == 2
+%{a: 1, b: {t, s}} = %{a: 1, b: { [1,3],  5}}
+# t == [1,3]
+# s == 5
+```
+W drugim przykładzie próbujemy związać mapę, która w Elixirze ma syntax `%{klucz: wartość}`.
+Najpierw upewniamy się, że klucz `:a` ma wartość 1, potem destrukturyzujemy klucz `:b`, z którego wyciągamy krotkę dwóch zmiennych.
+
+#### Przykład z kodu
+
+```elixir
+  def create(conn, %{"user" => user_params}) do
+    %{"email" => email, "password" => password} = user_params
+
+    if user = Accounts.get_user_by_email_and_password(email, password) do
+      UserAuth.log_in_user(conn, user, user_params)
+    else
+      render(conn, "new.html", error_message: "Invalid email or password")
+    end
+  end
+```
+
+Funkcja `create/2` w `user_session_controller.ex` drugi argument dopasowuje do mapy z kluczem "user", a następnie dopasowaną wartość dopasowuje do mapy z emailem i hasłem. Warto zauważyć, że kluczami są tutaj stringi, ponieważ argument jest kontrolowany przez klientów. Użycie atomu byłoby błędem, ponieważ klient mógłby generować argumenty, które tworzyłyby nowe atomy i w którymś momencie przekroczylibyśmy maksymalną liczbę atomów oraz scrashowalibyśmy VM erlanga.
+
+### Pipe operator
+
+Kolejnym ważnym elementem Elixira jest operator `|>`. Pozwala na przekazanie wartości jako pierwszego argumentu funkcji, więc zapis `f(g(x))` zamienia się na `x |> g() |> f()`.
+
+#### Przykład z kodu
+
+```elixir
+  def show(conn, %{"id" => enrollment_id}) do
+    terms =
+      enrollment_id
+      |> Enrollment.get_enrollment!()
+      |> Enrollment.get_terms_for_enrollment()
+
+    render(conn, "show.html", terms: terms)
+  end
+```
+
+Funkcja `show/2` z `enrollment_controller.ex` po wyciągnięciu `enrollment_id` przekazuje ją do funkcji `get_enrollment/1` z modułu `Enrollment`, który robi zapytanie do bazy danych, a następnie drugi wywołuje funkcję `get_terms_for_enrollment/1`, która robi zapytanie o terminy związane z zapisem i strukturyzuje dane w listę terminów z dodatkowymi informacjami nt nauczycieli czy grup.
+
+## Phoenix
+
