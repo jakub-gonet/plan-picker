@@ -421,4 +421,312 @@ Elixir ma konwencję, w której funkcje zakończone wykrzyknikiem rzucają wyją
 
 ## Phoenix
 
-## Phoenix Liveview
+Phoenix jest frameworkiem do budowy aplikacji webowych realizującym model MVC, został stworzony o doświadczenia z frameworkiem Rails.
+
+### Plugs
+
+Fundamentalnym elementem Phoenixa są plugi. Są to moduły lub funkcje, które realizują wspólny interfejs, dzięki czemu są łatwo komponowalne.
+Używa się ich głównie w routerze, tworząc pewną analogię do pipe'ów (`|>`). By funkcja działała jako plug, musi jako pierwszy argument przyjmować argument połączenia `conn` oraz opcje.
+
+W pliku `user_auth.ex` znajduje się parę plugów, które zajmują się autoryzacją ról:
+
+```elixir
+def require_role(conn, role) do
+    if Role.has_role?(current_user(conn), role) do
+        conn
+    else
+        conn
+        |> put_flash(:error, "You do not have required permissions to view this page.")
+        |> redirect(to: Routes.user_session_path(conn, :new))
+        |> halt()
+    end
+end
+```
+
+Sprawdzamy czy aktualny użytkownik ma wymaganą rolę. Jeżeli tak, zwracamy `conn` bez zmian, jeżeli nie to przekierowujemy do strony umożliwiającej zalogowanie i zatrzymujemy cały pipeline. Aktualny użytkownik jest wybierany z `conn.assigns`, pozwalając na dzielonie stanu pomiędzy plugami.
+
+### Router
+
+`router.ex`
+
+Router używa paru podstawowych pipeline'ów składających się z listy plugów:
+
+```elixir
+pipeline :browser do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+    plug :fetch_current_user
+    plug :put_root_layout, {PlanPickerWeb.LayoutView, :root}
+end
+
+pipeline :require_authenticated_user_having_data do
+    plug :require_authenticated_user
+    plug :put_roles_if_authenticated
+end
+
+pipeline :require_moderator_role do
+    plug :require_authenticated_user_having_data
+    plug :require_role, :moderator
+end
+
+pipeline :require_admin_role do
+    plug :require_authenticated_user_having_data
+    plug :require_role, :admin
+end
+```
+
+`browser` zapewnia, że akceptujemy wyłącznie połączenia z nagłówkiem `Accept: text/html` (`plug accepts, ["html"]`), dostajemy dostęp do sesji, dodajemy obsługę liveview czy zabezpieczamy się przed różnymi typami ataków.
+
+`require_moderator_role` i `require_admin_role` sprawdzają czy zalogowany użytkownik posiada odpowiednią rolę, jest to wykorzystywane w routingu.
+
+Niżej znajdują się opisy ścieżek, które mapowane są do kontrolerów i kontrolerów liveView
+
+```elixir
+scope "/manage/", PlanPickerWeb do
+    pipe_through [:browser, :require_moderator_role]
+
+    get "/enrollments/", EnrollmentManagementController, :index
+    get "/enrollments/:id/show", EnrollmentManagementController, :show
+    live "/enrollments/:id/edit", EnrollmentManagementLive, :edit
+    live "/enrollments/:id/classes", ClassManagementLive, :classes
+end
+```
+
+`scope` to prefix ścieżki, a nazwa modułu jest prefiksem modułów wymienionych w ścieżkach. np. `get "/enrollments/", EnrollmentManagementController, :index` mapuje się na ścieżkę `/manage/enrollments` udostępnianej pod metodą GET i uruchamia funkcję `index/2` w module `PlanPickerWeb.EnrollmentManagementController`. W ścieżkach widać mapowanie parametrów HTML na argumenty przekazywane do zmapowanej funkcji `get "/enrollments/:id/show"` udostępni id w drugim argumencie jako mapie `%{"id" => numeryczne_id}`.
+
+### MVC
+
+Framework Phoenix realizuje model MVC, często spotykany w rozwiązaniach webowych.
+
+[Modele](#Modele) realizowane są jako struktury w definiowane części biznesowej kodu źródłowego `lib/plan_picker`. Wraz z ich strukturą definiowane są też funkcje pozwalające na przetwarzanie danych związanych z tym modelem.
+
+Przykładem jest plik `subject.ex`, opisujący model przedmiotu.
+
+```elixir
+schema "subjects" do
+    field :name, :string
+    has_many :classes, PlanPicker.Class
+
+    belongs_to :enrollment, PlanPicker.Enrollment
+
+    timestamps()
+end
+```
+
+Opisana jest w nim struktura danych, ale także funkcje z nią związane:
+
+```elixir
+def create_subject!(subject_params, enrollment) do
+    %PlanPicker.Subject{}
+    |> changeset(subject_params)
+    |> put_assoc(:classes, [])
+    |> put_assoc(:enrollment, enrollment)
+    |> Repo.insert!()
+end
+
+def get_subject!(subject_id, opts \\ [preload: [classes: [:teacher, :users, :terms]]]) do
+    PlanPicker.Subject
+    |> Repo.get!(subject_id)
+    |> Repo.preload(opts[:preload])
+end
+```
+
+Warto zauważyć, że w funkcji `get_subject!` oprócz funkcji `Repo.get!` służącej do pobierania danych z bazy danych, użyta jest też funkcja `Repo.preload`, pobierająca powiązania (w tym przypadku grupy danego przedmiotu, a z każdej grupy nauczyciela, studentów i terminy).
+
+W celu zachowania separacje między warstwami systemu, jedynie funkcje udostępnione przez model są wykorzystywane przez [kontrolery](#Kontroler) do zarządzania danymi, np. w pliku `lib/plan_picker_web/controllers/enrollment_controller.ex`:
+
+```elixir
+def show(conn, %{"id" => enrollment_id}) do
+    terms =
+        enrollment_id
+        |> Enrollment.get_enrollment!()
+        |> Enrollment.get_terms_for_enrollment()
+
+    render(conn, "show.html", terms: terms)
+end
+```
+
+Funkcja `show` zdefiniowana w kontrolerze `EnrollmentController` korzysta z funkcji `get_enrollment!` i `get_terms_for_enrollment` w modelu `Enrollment`. Następnie, korzystając z funkcji `render`, przekazując w niej dane z modelu do [widoku](#View-i-template).
+
+### Kontroler
+
+Kontroler w podstawowej aplikacji Phoenixa jest realizowany jako zestaw funkcji przetwarzających dane. W [routerze](#Router) zdefiniowane jest, kiedy dane funkcje kontrolera są wykonywane.
+
+Kontroler jest pośrednikiem pomiędzy modelem logicznym aplikacji a jej widokiem od strony użytkownika. Wszystkie operacje na modelu są wykonywane przed renderowaniem strony HTML (z wyjątkiem mechanizmu [LiveView](#Phoenix-LiveView)) - jest to zasada we frameworku Phoenix - widok jest generowany deterministycznie z danych w modelu.
+
+Kontroler może przetworzone dane przekazać dalej widokowi za pomocą funkcji `render`, tak jak w `enrollment_controller.ex`:
+
+```elixir
+def index(conn, _params) do
+    enrollments = conn |> UserAuth.current_user() |> Enrollment.get_enrollments_for_user()
+
+    render(conn, "index.html", enrollments: enrollments)
+end
+```
+
+Jak widać na powyższym przykładzie, zapisy dla użytkownika są pobierane z bazy, a po pobraniu są przypisywane do symbolu `enrollments`. Dzięki temu będą one mogły być użyte przez widok.
+
+Poza renderowaniem widoku, kontroler może manipulować połączeniem w inne sposoby. Jednym z nich jest przekierowanie za pomocą funkcji `redirect`:
+
+```elixir
+def delete(conn, %{"id" => enrollment_id}) do
+    Enrollment.delete_enrollment!(enrollment_id)
+
+    conn
+    |> put_flash(:info, "Enrollment deleted.")
+    |> redirect(to: Routes.enrollment_management_path(conn, :index))
+end
+```
+
+W tym przypadku funkcja `delete` w `enrollment_management_controller.ex` przekieruje użytkownika do ścieżki wywołującej funkcję `index` z tego samego kontrolera.
+
+### View i template
+
+Widoki i szablony są bardzo powiązanymi bytami: każdy szablon jest skompilowany do modułu widoku i jest zwracany jako wartość funkcji `render`, dlatego każdy kontroler musi być skojarzony z widokiem i każdy szablon, który może być renderowany musi być powiązany z widokiem. Tradycyjnie w module widoku definiuje się funkcje pomocnicze przydatne w szablonach: `enrollment_view.ex` ma funkcję `get_width_perc` liczącą procent przydzielonych przez użytkownika punktów w porównaniu do maksymalnej liczby w szablonie `points_assignments.html.leex`:
+
+```elixir
+def get_width_perc(0), do: 0
+def get_width_perc(points) when points > 0,
+    do: trunc(100 * points / PlanPicker.PointAssignmentLive.max_points())
+```
+
+Szablony umożliwiają dodawanie wyrażeń Elixira przez specjalny język tagów: `<%= %>` renderuje do HTML wartość zwróconą w środku tagu, `<% %>` tego nie robi. Przykładem jest plik `_terms.html.eex`:
+
+```html
+<%= for term <- @terms do %>
+  <div class="term-overlay mb-3">
+    <%= live_render(@conn, PlanPicker.PointAssignmentLive, session: %{"term_id" => term.id}) %>
+    <div class="box content is-size-6">
+      <p class="mb-0">
+        <strong><%= term.name %></strong> <%= term.type %><%= prefix_if_not_empty(term.group_number, ", ") %><%= term |> display_week_type() |> prefix_if_not_empty(" - ") %>
+      </p>
+      <p class="mb-0"><%= Timestamp.Range.to_human_readable_iodata(term.interval) %></p>
+      <p><%= term.location %></p>
+      <span><%= term.teacher.name %> <%= term.teacher.surname %></span>
+    </div>
+  </div>
+<% end %>
+```
+
+Jak widać, elementy HTML są zamknięte w wyrażeniu `for`, co sprawia, że są renderowane dla każdego terminu w `@terms`. `@terms` to dane przypisane wcześniej do symbolu `terms` za pomocą funkcji `render`. Znaczniki `<%= %>` są używane do wyświetlania danych dotyczących terminu. Jest też użyta funkcja helper `prefix_if_not_empty` zdefiniowana w pliku widoku `enrollment_view.ex`.
+
+## Phoenix LiveView
+
+Phoenix LiveView jest rozwiązaniem pozwalającym na tworzenie widoków dynamicznych w Phoenix. Jest on rozwiązaniem problemu prezentowanego przez domyślny system kontrolerów i widoków Phoenix, pozwalających jedynie na tworzenie stron statycznych, gdyż (w przeciwieństwie do Phoenix View) LiveView pozwala na dynamicze zmiany stanu.
+
+Zasada deterministycznej generacji HTML nadal jest zachowana - odpowiednie elementy strony są regenerowane przy zmianie danych.
+
+W przeciwieństwie do domyślnego widoku, LiveView jest odpowiedzialny za interakcję z modelem. Aby otrzymać tę funkcjonalność, należy zdefiniować funkcje `mount` oraz `render`. 
+
+### Funkcja `mount`
+
+Funkcja `mount` jest wykonywana przed renderowaniem widoku. LiveView nie ma dostępu do połączenia `conn` - nie pozwala ono na dynamiczną zmianę stanu. Zamiast niego używane jest gniazdo `socket`. Funkcja mount inicjalizuje dane w gnieździe. Musi zwrócić krotkę w postaci `{:ok, socket}`, gdzie `socket` to gotowe gniazdo.
+
+```elixir
+  def mount(%{"id" => enrollment_id}, %{"user_token" => token} = _session, socket) do
+    enrollment = Enrollment.get_enrollment!(enrollment_id)
+
+    user = Accounts.get_user_by_session_token(token)
+
+    roles = Role.get_roles_for(user)
+
+    socket =
+        if user in enrollment.users || :admin in roles do
+            subject = get_first_subject(enrollment)
+
+            socket
+            |> assign(:enrollment, enrollment)
+            |> assign(:selected_subject, subject)
+            |> assign(:selected_class, nil)
+            |> assign(:selected_users, [])
+            |> assign(:points_assignments, %{})
+        else
+            socket
+            |> put_flash(:error, "You do not have required permissions to view this enrollment.")
+            |> redirect(to: Routes.enrollment_management_path(socket, :index))
+        end
+
+    {:ok, socket}
+end
+```
+
+W powyższym przykładzie z pliku `class_management_live.ex` funkcja pobiera wartość `enrollment_id` z parametrów ścieżki, oraz token sesji użytkownika `token`. Potem funkcja przypisuje do poszczególnych symboli początkowe wartości z modelu (lub przekierowuje do innej strony, gdy użytkownik nie ma odpowiednich uprawnień).
+
+To zachowanie jest podobne do zachowania kontrolera w klasycznym Phoenixie.
+
+### Funkcja `render`
+
+Funkcja `render` ma taką samą funkcjonalność jak w klasycznym widoku. Różnica polega na tym, że kiedy dane w gnieździe (oznaczone zmienną `assigns`) się zmienią, części szablonu które korzystały z tych danych są ponownie generowane.
+
+```elixir
+def render(assigns) do
+    render(EnrollmentView, "points_assignments.html", assigns)
+end
+```
+
+LiveView może także korzystać z już istniejącego widoku, jak w powyższym przykładzie z pliku `ponts_assignments_live.ex`. Widok będzie wtedy dynamicznie regenerowany pod warunkiem, że plik definiujący renderowany szablon (w tym przypadku `points_assignments.html.leex`) ma rozszerzenie `*.html.leex`.
+
+Co ciekawe, funkcja `render` nie musi być implementowana przez programistę - jeżeli w katalogu `lib/plan_picker_web/live` znajduje się plik `*.html.leex` o takiej samej nazwie co moduł LiveView, będzie on renderowany automatycznie. Taka sytuacja zachodzi w plikach `class_management_live.ex` oraz `class_management_live.html.leex`.
+
+### Funkcja `handle_event`
+
+Stan w LiveView może zmieniać się pod wpływem wielu wydarzeń. Najczęściej używaną są wydarzenia generowane przez akcje użytkownika. Aby skorzystać z tego mechanizmu, należy zdefiniować funkcję `handle_event`.
+
+```elixir
+def handle_event("toggle_user", %{"id" => user_id}, socket) do
+    user = Accounts.get_user!(user_id)
+
+    selected_users = socket.assigns[:selected_users]
+
+    if user in selected_users do
+        {:noreply, assign(socket, :selected_users, List.delete(selected_users, user))}
+    else
+        {:noreply, assign(socket, :selected_users, [user | selected_users])}
+    end
+end
+
+def handle_event("select_subject", %{"id" => subject_id}, socket) do
+    case socket.assigns[:selected_subject].id do
+        ^subject_id ->
+            {:noreply, socket}
+
+        _ ->
+            new_subject = Subject.get_subject!(subject_id)
+            {:noreply, assign(socket, :selected_subject, new_subject)}
+    end
+end
+
+def handle_event("select_class", %{"id" => class_id}, socket) do
+    selected_class = socket.assigns[:selected_class]
+      # ...
+```
+
+W powyższym przykładzie w `class_management_live.ex` w odpowiedzi na zdarzenia, LiveView uaktualnia stan za pomocą funkcji `assign`.
+
+Aby generować wydarzenie, Phoenix LiveView dostarcza specjalne atrybuty do elementów HTML, w szczególności `phx-click` oraz `phx-value-<nazwa_wartości>`:
+
+```html
+<li phx-click="select_subject" phx-value-id="<%= subject.id %>">
+  <a> <%= subject.name %> </a>
+</li>
+```
+
+Po kliknięciu w link, wygenerowane będzie zdarzenie "select_subject", a jako wartość zostanie wysłana mapa `%{"id" => <id_przedmiotu>}`. Dane te są wykorzystane w funkcji `handle_event`:
+
+```elixir
+def handle_event("select_subject", %{"id" => subject_id}, socket) do
+    case socket.assigns[:selected_subject].id do
+        ^subject_id ->
+            {:noreply, socket}
+
+        _ ->
+            new_subject = Subject.get_subject!(subject_id)
+            {:noreply, assign(socket, :selected_subject, new_subject)}
+    end
+end
+```
+
+W tym przypadku, jeżeli użytkownik kliknął na przedmiot inny niż ten związany z symbolem `:selected_subject`, zostanie on odpowiednio pobrany z bazy oraz aktualizowany w gnieździe.
